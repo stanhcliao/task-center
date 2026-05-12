@@ -14,6 +14,7 @@
       height: 100vh;
       overflow: hidden;
     }
+
     /* ── 側邊欄 ── */
     .sidebar {
       width: 240px;
@@ -23,10 +24,7 @@
       flex-direction: column;
       flex-shrink: 0;
     }
-    .sidebar-header {
-      padding: 24px 20px 16px;
-      border-bottom: 1px solid #2d3448;
-    }
+    .sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid #2d3448; }
     .sidebar-header h1 { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
     .sidebar-header p  { font-size: 11px; color: #6b7897; margin-top: 4px; }
     .sidebar-section { padding: 16px 12px 8px; }
@@ -39,14 +37,14 @@
       padding: 9px 12px; border-radius: 8px; cursor: pointer;
       font-size: 13px; color: #8a95ab; transition: all 0.15s; margin-bottom: 2px;
     }
-    .sidebar-item:hover { background: #252b3d; color: #cdd5e0; }
+    .sidebar-item:hover  { background: #252b3d; color: #cdd5e0; }
     .sidebar-item.active { background: #2563eb20; color: #60a5fa; font-weight: 600; }
-    .sidebar-item .icon { font-size: 15px; width: 20px; text-align: center; }
+    .sidebar-item .icon  { font-size: 15px; width: 20px; text-align: center; }
     .sidebar-item .badge {
       margin-left: auto; background: #2563eb; color: #fff;
       font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 700;
     }
-    .sidebar-item .coming-soon { margin-left: auto; font-size: 10px; color: #4a5568; font-style: italic; }
+
     /* ── 主內容 ── */
     .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
     .topbar {
@@ -57,9 +55,11 @@
     .topbar-title { font-size: 15px; font-weight: 700; color: #1a1f2e; }
     .topbar-date  { font-size: 12px; color: #8a95ab; }
     .content { padding: 28px; flex: 1; }
+
     /* ── 頁面切換 ── */
     .page { display: none; }
     .page.active { display: block; }
+
     /* ── 卡片 ── */
     .card {
       background: #fff; border-radius: 12px; padding: 24px;
@@ -67,6 +67,7 @@
     }
     .card-title { font-size: 14px; font-weight: 700; color: #1a1f2e; margin-bottom: 6px; }
     .card-desc  { font-size: 12px; color: #8a95ab; margin-bottom: 20px; line-height: 1.6; }
+
     /* ── 上傳區 ── */
     .upload-area {
       border: 2px dashed #c7d2e8; border-radius: 10px; padding: 32px;
@@ -81,27 +82,30 @@
     .upload-area p { font-size: 13px; color: #4a5568; }
     .upload-area .hint { font-size: 11px; color: #a0aec0; margin-top: 6px; }
     .file-name { margin-top: 12px; font-size: 12px; color: #2563eb; font-weight: 600; display: none; }
+
     /* ── 按鈕 ── */
     .btn {
       padding: 10px 22px; border-radius: 8px; font-size: 13px;
       font-weight: 600; cursor: pointer; border: none; transition: all 0.15s;
     }
-    .btn-primary { background: #2563eb; color: #fff; }
-    .btn-primary:hover { background: #1d4ed8; }
+    .btn-primary  { background: #2563eb; color: #fff; }
+    .btn-primary:hover  { background: #1d4ed8; }
     .btn-primary:disabled { background: #93afd8; cursor: not-allowed; }
     .btn-secondary { background: #f0f2f5; color: #4a5568; }
     .btn-secondary:hover { background: #e2e8f0; }
     .btn-row { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
-    /* ── 結果 ── */
+
+    /* ── 結果 (庫存) ── */
     .result-box { display: none; margin-top: 24px; }
     .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
     .result-card { border-radius: 10px; padding: 20px; text-align: center; }
     .result-card.buyout { background: linear-gradient(135deg, #1e40af, #2563eb); color: #fff; }
     .result-card.temp   { background: linear-gradient(135deg, #065f46, #059669); color: #fff; }
-    .result-card .label  { font-size: 11px; opacity: 0.8; margin-bottom: 8px; letter-spacing: 0.5px; }
-    .result-card .amount { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+    .result-card .label  { font-size: 11px; opacity: 0.8; margin-bottom: 8px; }
+    .result-card .amount { font-size: 26px; font-weight: 800; }
     .result-card .unit   { font-size: 11px; opacity: 0.7; margin-top: 4px; }
-    /* ── 詳細表格 ── */
+
+    /* ── 表格 (共用) ── */
     .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid #e5e9f0; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; }
     thead th {
@@ -114,6 +118,7 @@
     .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; }
     .tag-adjusted { background: #fef3c7; color: #92400e; }
     .tag-normal   { background: #f0f4ff; color: #3730a3; }
+
     /* ── Loading ── */
     .loading { display: none; align-items: center; gap: 8px; font-size: 13px; color: #2563eb; }
     .spinner {
@@ -122,28 +127,27 @@
       animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    /* ── Email 功能 ── */
-    .email-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+
+    /* ── Email ── */
+    .email-stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
     .email-stat { border-radius: 10px; padding: 16px; text-align: center; }
-    .email-stat.reply  { background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff; }
-    .email-stat.track  { background: linear-gradient(135deg, #0369a1, #38bdf8); color: #fff; }
-    .email-stat.marked { background: linear-gradient(135deg, #065f46, #34d399); color: #fff; }
+    .email-stat.reply  { background: linear-gradient(135deg,#7c3aed,#a78bfa); color:#fff; }
+    .email-stat.track  { background: linear-gradient(135deg,#0369a1,#38bdf8); color:#fff; }
+    .email-stat.marked { background: linear-gradient(135deg,#065f46,#34d399); color:#fff; }
     .email-stat .stat-num   { font-size: 28px; font-weight: 800; }
     .email-stat .stat-label { font-size: 11px; opacity: 0.85; margin-top: 4px; }
     .email-section { margin-bottom: 16px; }
     .email-section-header {
       display: flex; align-items: center; gap: 8px; padding: 10px 14px;
-      border-radius: 8px 8px 0 0; font-size: 13px; font-weight: 700;
-      cursor: pointer; user-select: none;
+      border-radius: 8px 8px 0 0; font-size: 13px; font-weight: 700; cursor: pointer; user-select: none;
     }
     .email-section-header.reply-hdr { background: #ede9fe; color: #5b21b6; }
     .email-section-header.track-hdr { background: #e0f2fe; color: #0369a1; }
     .email-section-header.ref-hdr   { background: #f0fdf4; color: #166534; }
     .email-section-header .count-badge {
-      margin-left: auto; background: rgba(0,0,0,0.12);
-      border-radius: 10px; padding: 1px 8px; font-size: 11px;
+      margin-left: auto; background: rgba(0,0,0,0.12); border-radius: 10px; padding: 1px 8px; font-size: 11px;
     }
-    .email-list { border: 1px solid #e5e9f0; border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
+    .email-list { border:1px solid #e5e9f0; border-top:none; border-radius:0 0 8px 8px; overflow:hidden; }
     .email-item { padding: 12px 16px; border-bottom: 1px solid #f0f2f5; transition: background 0.1s; }
     .email-item:last-child { border-bottom: none; }
     .email-item:hover { background: #f8faff; }
@@ -158,25 +162,118 @@
     }
     .email-result-box { display: none; }
     .email-fetch-time { font-size: 11px; color: #8a95ab; text-align: right; margin-bottom: 12px; }
-    /* ── 即將上線 placeholder ── */
-    .placeholder { text-align: center; padding: 60px 20px; color: #a0aec0; }
-    .placeholder .emoji { font-size: 48px; margin-bottom: 16px; }
-    .placeholder h3 { font-size: 16px; color: #4a5568; margin-bottom: 8px; }
-    .placeholder p  { font-size: 13px; line-height: 1.6; }
-    /* ── 錯誤訊息 ── */
+
+    /* ── 錯誤 ── */
     .error-msg {
       display: none; background: #fff5f5; border: 1px solid #fed7d7;
-      border-radius: 8px; padding: 12px 16px; margin-top: 16px;
-      font-size: 12px; color: #c53030;
+      border-radius: 8px; padding: 12px 16px; margin-top: 16px; font-size: 12px; color: #c53030;
     }
-    /* ── 摘要列 ── */
     .summary-row { display: flex; gap: 16px; margin-bottom: 16px; font-size: 12px; color: #4a5568; }
     .summary-row span { background: #f0f4ff; padding: 4px 10px; border-radius: 6px; }
+
+    /* ════════════════════════════════════════════
+       應收帳款計算專用樣式
+    ════════════════════════════════════════════ */
+
+    /* 設定區 */
+    .ar-config-grid {
+      display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start;
+    }
+    .ar-form-label {
+      font-size: 11px; font-weight: 700; color: #8a95ab;
+      text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 5px;
+    }
+    .ar-input, .ar-textarea {
+      width: 100%; background: #f8faff; border: 1px solid #c7d2e8;
+      border-radius: 8px; color: #1a1f2e; padding: 9px 12px;
+      font-size: 12px; font-family: inherit; outline: none; transition: border-color 0.2s;
+    }
+    .ar-input:focus, .ar-textarea:focus { border-color: #2563eb; }
+    .ar-textarea { resize: vertical; min-height: 68px; }
+    .ar-hint { font-size: 11px; color: #a0aec0; margin-top: 4px; line-height: 1.5; }
+
+    /* 五格上傳 */
+    .ar-files-grid {
+      display: grid; grid-template-columns: repeat(5,1fr); gap: 12px;
+    }
+    @media(max-width:900px){ .ar-files-grid{ grid-template-columns: repeat(3,1fr); } }
+
+    .ar-file-area {
+      background: #f8faff; border: 2px dashed #c7d2e8;
+      border-radius: 10px; padding: 16px 10px; text-align: center;
+      cursor: pointer; transition: all 0.2s; position: relative;
+      min-height: 130px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 5px;
+    }
+    .ar-file-area:hover  { border-color: #2563eb; }
+    .ar-file-area.dragover { border-color: #2563eb; background: #eff4ff; }
+    .ar-file-area.ready  { border-color: #059669; border-style: solid; }
+    .ar-file-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .ar-part-tag {
+      font-size: 10px; font-weight: 700; color: #fff;
+      padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em;
+    }
+    .ar-file-icon { font-size: 1.4rem; }
+    .ar-file-desc { font-size: 11px; color: #8a95ab; line-height: 1.4; }
+    .ar-file-name { font-size: 10px; color: #059669; word-break: break-all; line-height: 1.3; }
+
+    /* 狀態列 */
+    .ar-status {
+      display: none; padding: 10px 14px; border-radius: 8px;
+      font-size: 12px; margin-top: 12px; text-align: center;
+    }
+    .ar-status.info    { background: #eff4ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    .ar-status.success { background: #f0fdf4; color: #059669; border: 1px solid #a7f3d0; }
+    .ar-status.error   { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; }
+
+    /* 摘要卡片 */
+    .ar-summary-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 12px; margin-bottom: 20px;
+    }
+    .ar-summary-card {
+      background: #f8faff; border: 1px solid #e5e9f0;
+      border-radius: 10px; padding: 14px 16px; text-align: center;
+    }
+    .ar-summary-card .sl { font-size: 11px; color: #8a95ab; margin-bottom: 5px; }
+    .ar-summary-card .sv { font-size: 1.15rem; font-weight: 800; color: #2563eb; }
+    .ar-summary-card .ss { font-size: 10px; color: #a0aec0; margin-top: 3px; }
+
+    /* 結果表格 */
+    .ar-table-wrap { overflow-x: auto; }
+    .ar-results-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap;
+    }
+    .ar-results-table th {
+      background: #f8faff; padding: 9px 14px; text-align: center;
+      font-weight: 700; color: #4a5568; border-bottom: 1px solid #e5e9f0; font-size: 11px;
+    }
+    .ar-results-table th:first-child { text-align: left; position: sticky; left: 0; z-index: 1; min-width: 160px; }
+    .ar-results-table td { padding: 9px 14px; border-bottom: 1px solid #f0f2f5; text-align: right; }
+    .ar-results-table td:first-child {
+      text-align: left; color: #4a5568; font-size: 11px; position: sticky; left: 0; background: #fff;
+    }
+    .ar-results-table tr:hover td { background: #f8faff; }
+    .ar-results-table tr:hover td:first-child { background: #f8faff; }
+    .ar-results-table tr.ar-total-row td {
+      background: #eff4ff; font-weight: 700; color: #1e40af;
+      font-size: 12px; border-top: 2px solid #bfdbfe;
+    }
+    .ar-results-table tr.ar-total-row td:first-child { background: #eff4ff; color: #1a1f2e; }
+    .ar-results-table tr.ar-total-row:hover td { background: #dbeafe; }
+    .ar-results-table tr.ar-total-row:hover td:first-child { background: #dbeafe; }
+    .ar-val-zero { color: #c7d2e8 !important; }
+
+    .ar-legend {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; font-size: 11px; color: #8a95ab;
+    }
+    .ar-legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
   </style>
 </head>
 <body>
 
-<!-- 側邊欄 -->
+<!-- ═══ 側邊欄 ═══ -->
 <div class="sidebar">
   <div class="sidebar-header">
     <h1>📋 任務中心</h1>
@@ -194,15 +291,14 @@
       <span class="icon">📦</span> 庫存金額計算
       <span class="badge">NEW</span>
     </div>
-    <!-- ★ 修改：直接開新分頁到 ar-calculator.html -->
-    <div class="sidebar-item" onclick="window.open('ar-calculator.html','_blank')">
+    <div class="sidebar-item" id="nav-ar" onclick="goTo('ar-ap')">
       <span class="icon">💰</span> 應收應付計算
       <span class="badge" style="background:#059669">NEW</span>
     </div>
   </div>
 </div>
 
-<!-- 主內容 -->
+<!-- ═══ 主內容 ═══ -->
 <div class="main">
   <div class="topbar">
     <div class="topbar-title" id="page-title">📦 庫存金額計算</div>
@@ -210,7 +306,7 @@
   </div>
   <div class="content">
 
-    <!-- 庫存計算頁 -->
+    <!-- ── 庫存計算頁 ── -->
     <div class="page active" id="page-inventory">
       <div class="card">
         <div class="card-title">上傳庫存報表</div>
@@ -229,12 +325,9 @@
         <div class="btn-row">
           <button class="btn btn-primary" id="calc-btn" onclick="calculate()" disabled>開始計算</button>
           <button class="btn btn-secondary" onclick="reset()">重置</button>
-          <div class="loading" id="loading">
-            <div class="spinner"></div> 計算中...
-          </div>
+          <div class="loading" id="loading"><div class="spinner"></div> 計算中...</div>
         </div>
       </div>
-      <!-- 結果區 -->
       <div class="result-box" id="result-box">
         <div class="result-grid">
           <div class="result-card buyout">
@@ -253,18 +346,11 @@
           <div class="summary-row" id="summary-row"></div>
           <div class="table-wrap">
             <table id="detail-table">
-              <thead>
-                <tr>
-                  <th>採購廠商序號</th>
-                  <th>平均進貨價</th>
-                  <th>調整後價格</th>
-                  <th>調整說明</th>
-                  <th>買斷庫存</th>
-                  <th>買斷庫存金額</th>
-                  <th>暫時庫存</th>
-                  <th>暫時庫存金額</th>
-                </tr>
-              </thead>
+              <thead><tr>
+                <th>採購廠商序號</th><th>平均進貨價</th><th>調整後價格</th>
+                <th>調整說明</th><th>買斷庫存</th><th>買斷庫存金額</th>
+                <th>暫時庫存</th><th>暫時庫存金額</th>
+              </tr></thead>
               <tbody id="detail-body"></tbody>
             </table>
           </div>
@@ -272,7 +358,7 @@
       </div>
     </div>
 
-    <!-- Email 頁 -->
+    <!-- ── Email 頁 ── -->
     <div class="page" id="page-email">
       <div class="card">
         <div class="card-title">每日 Email 整理</div>
@@ -282,28 +368,16 @@
         </div>
         <div class="btn-row">
           <button class="btn btn-primary" onclick="runEmail()">▶ 開始整理 Email</button>
-          <div class="loading" id="email-loading">
-            <div class="spinner"></div> 整理中，約需 20-30 秒...
-          </div>
+          <div class="loading" id="email-loading"><div class="spinner"></div> 整理中，約需 20-30 秒...</div>
         </div>
         <div class="error-msg" id="email-error"></div>
       </div>
-      <!-- 結果區 -->
       <div class="email-result-box" id="email-result-box">
         <div class="email-fetch-time" id="email-fetch-time"></div>
         <div class="email-stat-grid">
-          <div class="email-stat reply">
-            <div class="stat-num" id="stat-reply">0</div>
-            <div class="stat-label">需要回覆</div>
-          </div>
-          <div class="email-stat track">
-            <div class="stat-num" id="stat-track">0</div>
-            <div class="stat-label">待辦追蹤</div>
-          </div>
-          <div class="email-stat marked">
-            <div class="stat-num" id="stat-marked">0</div>
-            <div class="stat-label">已標示已讀</div>
-          </div>
+          <div class="email-stat reply"><div class="stat-num" id="stat-reply">0</div><div class="stat-label">需要回覆</div></div>
+          <div class="email-stat track"><div class="stat-num" id="stat-track">0</div><div class="stat-label">待辦追蹤</div></div>
+          <div class="email-stat marked"><div class="stat-num" id="stat-marked">0</div><div class="stat-label">已標示已讀</div></div>
         </div>
         <div class="email-section" id="section-reply"></div>
         <div class="email-section" id="section-track"></div>
@@ -311,239 +385,455 @@
       </div>
     </div>
 
-    <!-- ★ 應收應付頁：改成跳轉提示 -->
+    <!-- ── 應收應付頁 ── -->
     <div class="page" id="page-ar-ap">
+
+      <!-- Step 1: 設定 -->
       <div class="card">
-        <div class="placeholder">
-          <div class="emoji">💰</div>
-          <h3>應收應付計算</h3>
-          <p>上傳五份月報表，自動計算各月份應收帳款預估金額。</p>
-          <br>
-          <a href="ar-calculator.html" target="_blank"
-             class="btn btn-primary"
-             style="display:inline-block;text-decoration:none;margin-top:12px;">
-            🚀 開啟計算工具
-          </a>
+        <div class="card-title">⚙️ Step 1 — 計算設定</div>
+        <div class="ar-config-grid">
+          <div>
+            <label class="ar-form-label">結算日 (Cutoff Date)</label>
+            <input type="date" id="ar-cutoff" class="ar-input" value="2025-12-31">
+            <p class="ar-hint">預估表從結算日次月開始</p>
+          </div>
+          <div>
+            <label class="ar-form-label">排除訂單序號（每月不同，逗號分隔）</label>
+            <textarea id="ar-exclude" class="ar-textarea"
+              placeholder="例：81359, 99234">81359, 99234, 94366, 103938, 112111, 112112, 114967, 125387, 125388</textarea>
+            <p class="ar-hint">這些序號對應的發票／訂單將完全排除</p>
+          </div>
         </div>
       </div>
-    </div>
+
+      <!-- Step 2: 上傳 -->
+      <div class="card">
+        <div class="card-title">📂 Step 2 — 上傳五份報表</div>
+        <div class="ar-files-grid">
+
+          <div class="ar-file-area" id="ar-area-p1"
+               ondragover="arEv('p1',true,event)" ondragleave="arEv('p1',false,event)" ondrop="arDrop('p1',event)">
+            <input type="file" accept=".xlsx,.xls,.csv" onchange="arPick('p1',event)">
+            <span class="ar-part-tag" style="background:#3b6fe8">Part 1</span>
+            <div class="ar-file-icon">📄</div>
+            <div class="ar-file-desc">訂單日期前<br>未付款之發票<br><em style="font-size:10px;color:#3b6fe8">工作表：Invoice</em></div>
+            <div id="ar-stat-p1"></div>
+            <div class="ar-file-name" id="ar-fname-p1"></div>
+          </div>
+
+          <div class="ar-file-area" id="ar-area-p2"
+               ondragover="arEv('p2',true,event)" ondragleave="arEv('p2',false,event)" ondrop="arDrop('p2',event)">
+            <input type="file" accept=".xlsx,.xls,.csv" onchange="arPick('p2',event)">
+            <span class="ar-part-tag" style="background:#059669">Part 2</span>
+            <div class="ar-file-icon">📄</div>
+            <div class="ar-file-desc">結算日前未付<br>已於次月付款<br><em style="font-size:10px;color:#059669">工作表：Invoice</em></div>
+            <div id="ar-stat-p2"></div>
+            <div class="ar-file-name" id="ar-fname-p2"></div>
+          </div>
+
+          <div class="ar-file-area" id="ar-area-p3"
+               ondragover="arEv('p3',true,event)" ondragleave="arEv('p3',false,event)" ondrop="arDrop('p3',event)">
+            <input type="file" accept=".xlsx,.xls,.csv" onchange="arPick('p3',event)">
+            <span class="ar-part-tag" style="background:#d97706">Part 3</span>
+            <div class="ar-file-icon">📄</div>
+            <div class="ar-file-desc">結算日<br>已收支票之發票<br><em style="font-size:10px;color:#d97706">工作表：Invoice</em></div>
+            <div id="ar-stat-p3"></div>
+            <div class="ar-file-name" id="ar-fname-p3"></div>
+          </div>
+
+          <div class="ar-file-area" id="ar-area-p41"
+               ondragover="arEv('p41',true,event)" ondragleave="arEv('p41',false,event)" ondrop="arDrop('p41',event)">
+            <input type="file" accept=".xlsx,.xls,.csv" onchange="arPick('p41',event)">
+            <span class="ar-part-tag" style="background:#dc2626">Part 4-1</span>
+            <div class="ar-file-icon">📄</div>
+            <div class="ar-file-desc">未完成發票開立<br>訂單明細 (一)<br><em style="font-size:10px;color:#dc2626">工作表：訂單明細</em></div>
+            <div id="ar-stat-p41"></div>
+            <div class="ar-file-name" id="ar-fname-p41"></div>
+          </div>
+
+          <div class="ar-file-area" id="ar-area-p42"
+               ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop="arDrop('p42',event)">
+            <input type="file" accept=".xlsx,.xls,.csv" onchange="arPick('p42',event)">
+            <span class="ar-part-tag" style="background:#9333ea">Part 4-2</span>
+            <div class="ar-file-icon">📄</div>
+            <div class="ar-file-desc">未完成發票開立<br>訂單明細 (二)<br><em style="font-size:10px;color:#9333ea">工作表：訂單明細</em></div>
+            <div id="ar-stat-p42"></div>
+            <div class="ar-file-name" id="ar-fname-p42"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Step 3: 執行 -->
+      <div class="card">
+        <div class="card-title">🚀 Step 3 — 執行計算</div>
+        <div class="btn-row" style="margin-top:0;">
+          <button class="btn btn-primary" id="ar-calc-btn" onclick="arCalculate()">🚀 開始計算</button>
+          <button class="btn btn-secondary" onclick="arReset()">🔄 全部重置</button>
+          <div class="loading" id="ar-loading"><div class="spinner"></div> 計算中，請稍候…</div>
+        </div>
+        <div id="ar-status" class="ar-status"></div>
+      </div>
+
+      <!-- 結果 -->
+      <div id="ar-results" style="display:none;">
+        <div class="card">
+          <div class="card-title">📊 預估收款結果</div>
+          <div class="ar-summary-grid" id="ar-summary-grid"></div>
+          <div class="ar-legend">
+            <span><span class="ar-legend-dot" style="background:#3b6fe8"></span>Part 1 發票未付</span>
+            <span><span class="ar-legend-dot" style="background:#059669"></span>Part 2 次月已付</span>
+            <span><span class="ar-legend-dot" style="background:#d97706"></span>Part 3 已收支票</span>
+            <span><span class="ar-legend-dot" style="background:#9333ea"></span>Part 4 未開立發票</span>
+          </div>
+          <div class="ar-table-wrap">
+            <table class="ar-results-table" id="ar-results-table"></table>
+          </div>
+          <p style="font-size:11px;color:#a0aec0;text-align:center;margin-top:14px;">
+            金額已四捨五入至整數（新台幣 TWD）　金額為零以「—」顯示
+          </p>
+        </div>
+      </div>
+
+    </div><!-- /page-ar-ap -->
 
   </div><!-- /content -->
 </div><!-- /main -->
 
 <script>
-  // ── 今日日期 ──
-  const dateEl = document.getElementById('today-date');
-  const now = new Date();
-  dateEl.textContent = now.toLocaleDateString('zh-TW', {
-    year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
-  });
+// ════════════════════════════════════════
+// 共用
+// ════════════════════════════════════════
+document.getElementById('today-date').textContent =
+  new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
 
-  // ── 頁面切換 ──
-  const pageMap = {
-    inventory: { pageId: 'page-inventory', title: '📦 庫存金額計算', navId: 'nav-inventory' },
-    email:     { pageId: 'page-email',     title: '✉️ 整理 Email',   navId: 'nav-email'      },
-    'ar-ap':   { pageId: 'page-ar-ap',     title: '💰 應收應付計算', navId: null              },
+const pageMap = {
+  inventory: { pageId: 'page-inventory', title: '📦 庫存金額計算', navId: 'nav-inventory' },
+  email:     { pageId: 'page-email',     title: '✉️ 整理 Email',   navId: 'nav-email'     },
+  'ar-ap':   { pageId: 'page-ar-ap',     title: '💰 應收應付計算', navId: 'nav-ar'        },
+};
+function goTo(key) {
+  const cfg = pageMap[key]; if (!cfg) return;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  document.getElementById(cfg.pageId).classList.add('active');
+  document.getElementById('page-title').textContent = cfg.title;
+  if (cfg.navId) document.getElementById(cfg.navId).classList.add('active');
+}
+
+// ════════════════════════════════════════
+// 庫存計算
+// ════════════════════════════════════════
+const uploadArea = document.getElementById('upload-area');
+uploadArea.addEventListener('dragover',  e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', e => {
+  e.preventDefault(); uploadArea.classList.remove('dragover');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+document.getElementById('file-input').addEventListener('change', e => {
+  if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+let workbook = null;
+function handleFile(file) {
+  const ext = '.' + file.name.split('.').pop().toLowerCase();
+  if (!['.xlsx','.xls','.csv'].includes(ext)) { showError('請上傳 .xlsx、.xls 或 .csv 格式的檔案。'); return; }
+  hideError();
+  document.getElementById('file-name').style.display = 'block';
+  document.getElementById('file-name').textContent = '✅ 已選擇：' + file.name;
+  document.getElementById('calc-btn').disabled = false;
+  document.getElementById('result-box').style.display = 'none';
+  const reader = new FileReader();
+  reader.onload = e => {
+    try { workbook = XLSX.read(new Uint8Array(e.target.result), { type:'array' }); }
+    catch(err) { showError('讀取檔案時發生錯誤：' + err.message); }
   };
-  function goTo(key) {
-    const cfg = pageMap[key];
-    if (!cfg) return;
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-    document.getElementById(cfg.pageId).classList.add('active');
-    document.getElementById('page-title').textContent = cfg.title;
-    if (cfg.navId) document.getElementById(cfg.navId).classList.add('active');
-  }
+  reader.readAsArrayBuffer(file);
+}
+function calculate() {
+  hideError();
+  if (!workbook) { showError('請先上傳檔案。'); return; }
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('calc-btn').disabled = true;
+  setTimeout(() => {
+    try {
+      const sheetName = workbook.SheetNames.find(n => n.includes('現有庫存報表')) || workbook.SheetNames[0];
+      const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval:'' });
+      if (!rows.length) { showError('工作表內沒有資料，請確認檔案格式。'); return; }
+      let totalBuyout=0, totalTemp=0; const details=[];
+      rows.forEach(row => {
+        const vendor=String(row['採購廠商序號']||'').trim();
+        const rawPrice=parseFloat(row['平均進貨價'])||0;
+        const buyQty=parseFloat(row['買斷庫存'])||0;
+        const tempQty=parseFloat(row['暫時庫存(待出貨庫存)'])||0;
+        let adjPrice, adjLabel;
+        if(vendor==='VD0001152'){adjPrice=rawPrice*0.82;adjLabel='×0.82';}
+        else if(vendor==='VD0000096'){adjPrice=rawPrice*0.97;adjLabel='×0.97';}
+        else{adjPrice=rawPrice;adjLabel='—';}
+        totalBuyout+=buyQty*adjPrice; totalTemp+=tempQty>0?adjPrice*tempQty:0;
+        details.push({vendor,rawPrice,adjPrice,adjLabel,buyQty,buyAmount:buyQty*adjPrice,tempQty,tempAmount:tempQty>0?adjPrice*tempQty:0});
+      });
+      document.getElementById('total-buyout').textContent=fmt(totalBuyout);
+      document.getElementById('total-temp').textContent=fmt(totalTemp);
+      const adj=details.filter(d=>d.adjLabel!=='—').length;
+      document.getElementById('summary-row').innerHTML=`<span>共 ${rows.length} 筆資料</span><span>價格調整：${adj} 筆</span>`;
+      const tbody=document.getElementById('detail-body'); tbody.innerHTML='';
+      details.forEach(d=>{
+        const tr=document.createElement('tr'); const isAdj=d.adjLabel!=='—';
+        tr.innerHTML=`<td>${d.vendor||'（未填）'}</td><td>${fmt(d.rawPrice)}</td><td>${fmt(d.adjPrice)}</td>
+          <td><span class="tag ${isAdj?'tag-adjusted':'tag-normal'}">${isAdj?d.adjLabel:'未調整'}</span></td>
+          <td>${d.buyQty.toLocaleString()}</td><td>${fmt(d.buyAmount)}</td>
+          <td>${d.tempQty.toLocaleString()}</td><td>${fmt(d.tempAmount)}</td>`;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('result-box').style.display='block';
+      document.getElementById('result-box').scrollIntoView({behavior:'smooth',block:'start'});
+    } catch(err){ showError('計算時發生錯誤：'+err.message); }
+    finally{ document.getElementById('loading').style.display='none'; document.getElementById('calc-btn').disabled=false; }
+  },100);
+}
+function fmt(n){ return n.toLocaleString('zh-TW',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function reset(){
+  workbook=null; document.getElementById('file-input').value='';
+  document.getElementById('file-name').style.display='none';
+  document.getElementById('calc-btn').disabled=true;
+  document.getElementById('result-box').style.display='none'; hideError();
+}
+function showError(msg){ const e=document.getElementById('error-msg'); e.textContent='⚠️ '+msg; e.style.display='block'; document.getElementById('loading').style.display='none'; document.getElementById('calc-btn').disabled=false; }
+function hideError(){ document.getElementById('error-msg').style.display='none'; }
 
-  // ── 上傳區拖曳效果 ──
-  const uploadArea = document.getElementById('upload-area');
-  uploadArea.addEventListener('dragover',  e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
-  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
-  uploadArea.addEventListener('drop', e => {
-    e.preventDefault();
-    uploadArea.classList.remove('dragover');
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
+// ════════════════════════════════════════
+// Email
+// ════════════════════════════════════════
+const GAS_URL='https://script.google.com/macros/s/AKfycbzVtM6JkxxtDWTLGzyftmMwhwH6xNaKjzaTfCSkBUyi4JtQytrWAXAGtDUQJPBJoPLL/exec';
+function runEmail(){
+  document.getElementById('email-loading').style.display='flex';
+  document.getElementById('email-result-box').style.display='none';
+  document.getElementById('email-error').style.display='none';
+  var cb='gasEmailCb_'+Date.now(), s=document.createElement('script');
+  window[cb]=function(data){
+    delete window[cb]; if(s.parentNode)s.parentNode.removeChild(s);
+    document.getElementById('email-loading').style.display='none';
+    if(!data.success){ document.getElementById('email-error').textContent='⚠️ GAS 回傳錯誤，請稍後再試。'; document.getElementById('email-error').style.display='block'; return; }
+    renderEmail(data);
+  };
+  s.onerror=function(){ delete window[cb]; if(s.parentNode)s.parentNode.removeChild(s); document.getElementById('email-loading').style.display='none'; document.getElementById('email-error').textContent='⚠️ 執行失敗，請確認 GAS 已正確部署且有存取權限。'; document.getElementById('email-error').style.display='block'; };
+  s.src=GAS_URL+'?action=runEmail&callback='+cb; document.head.appendChild(s);
+}
+function renderEmail(data){
+  document.getElementById('stat-reply').textContent=data.needReply.length;
+  document.getElementById('stat-track').textContent=data.toTrack.length;
+  document.getElementById('stat-marked').textContent=data.markedCount;
+  document.getElementById('email-fetch-time').textContent='資料擷取時間：'+data.fetchedAt+' 共收到 '+data.total+' 封';
+  renderEmailSection('section-reply','需要回覆',data.needReply,'reply-hdr','🔴');
+  renderEmailSection('section-track','待辦追蹤',data.toTrack,'track-hdr','🟡');
+  renderEmailSection('section-ref','參考資訊',data.reference,'ref-hdr','⚪');
+  document.getElementById('email-result-box').style.display='block';
+  document.getElementById('email-result-box').scrollIntoView({behavior:'smooth'});
+}
+function renderEmailSection(id,title,items,hdr,dot){
+  const c=document.getElementById(id); if(!items.length){c.innerHTML='';return;}
+  let h=`<div class="email-section-header ${hdr}">${dot} ${title}<span class="count-badge">${items.length} 封</span></div><div class="email-list">`;
+  items.forEach(i=>{ const tag=i.tag==='lockincenter'?'<span class="email-tag">lockincenter</span>':'';
+    h+=`<div class="email-item"><div class="email-item-top"><span class="email-from">${esc(i.from)}${tag}</span><span class="email-date">${esc(i.date)}</span></div><div class="email-subject">${esc(i.subject)}</div><div class="email-snippet">${esc(i.snippet)}</div></div>`; });
+  c.innerHTML=h+'</div>';
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ════════════════════════════════════════
+// 應收帳款計算
+// ════════════════════════════════════════
+const arFiles = { p1:null, p2:null, p3:null, p41:null, p42:null };
+
+const AR_SHEET_HINTS = {
+  p1:['Invoice','invoice'], p2:['Invoice','invoice'], p3:['Invoice','invoice'],
+  p41:['訂單明細','Sheet1'], p42:['訂單明細','Sheet1'],
+};
+
+// 拖曳
+function arEv(k,on,e){ e.preventDefault(); document.getElementById('ar-area-'+k).classList.toggle('dragover',on); }
+function arDrop(k,e){ e.preventDefault(); arEv(k,false,e); if(e.dataTransfer.files[0]) arStore(k,e.dataTransfer.files[0]); }
+function arPick(k,e){ if(e.target.files[0]) arStore(k,e.target.files[0]); }
+function arStore(k,f){
+  arFiles[k]=f;
+  document.getElementById('ar-stat-'+k).textContent='✅';
+  document.getElementById('ar-fname-'+k).textContent=f.name;
+  document.getElementById('ar-area-'+k).classList.add('ready');
+}
+
+// 讀檔
+function arReadFile(key){
+  return new Promise((ok,fail)=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      try{
+        const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+        let sn=wb.SheetNames[0];
+        for(const h of (AR_SHEET_HINTS[key]||[])){ if(wb.SheetNames.includes(h)){sn=h;break;} }
+        ok(XLSX.utils.sheet_to_json(wb.Sheets[sn],{raw:true,defval:null}));
+      }catch(ex){fail(ex);}
+    };
+    r.onerror=fail; r.readAsArrayBuffer(arFiles[key]);
   });
-  document.getElementById('file-input').addEventListener('change', e => {
-    if (e.target.files[0]) handleFile(e.target.files[0]);
+}
+
+// Period 工具
+function arYM(y,m){ return `${y}-${String(m).padStart(2,'0')}`; }
+function arAddMo(s,n){ let[y,m]=s.split('-').map(Number); m+=n; while(m>12){m-=12;y++;} while(m<1){m+=12;y--;} return arYM(y,m); }
+function arDateToYM(d){ if(!d||isNaN(d))return null; return arYM(d.getFullYear(),d.getMonth()+1); }
+function arParseDate(v){
+  if(!v&&v!==0)return null;
+  if(v instanceof Date)return isNaN(v)?null:v;
+  if(typeof v==='number'){const d=new Date(Math.round((v-25569)*86400*1000));return isNaN(d)?null:d;}
+  if(typeof v==='string'){const d=new Date(v.trim());return isNaN(d)?null:d;}
+  return null;
+}
+function arParseNum(v){ if(typeof v==='number')return isNaN(v)?0:v; if(!v)return 0; const n=parseFloat(String(v).replace(/,/g,'')); return isNaN(n)?0:n; }
+function arCol(row,...names){ for(const n of names){ if(row[n]!==undefined&&row[n]!==null)return row[n]; const k=Object.keys(row).find(k=>k.trim()===n.trim()); if(k!==undefined)return row[k]; } return null; }
+function arExcluded(val,excSet){ if(!val&&val!==0)return false; return String(val).split(',').map(s=>s.trim()).some(s=>excSet.has(s)); }
+
+// 主計算
+async function arCalculate(){
+  const btn=document.getElementById('ar-calc-btn');
+  btn.disabled=true;
+  document.getElementById('ar-loading').style.display='flex';
+
+  const cutInput=document.getElementById('ar-cutoff').value;
+  if(!cutInput){ arStatus('error','❌ 請輸入結算日'); btn.disabled=false; document.getElementById('ar-loading').style.display='none'; return; }
+
+  const cutoff=new Date(cutInput+'T23:59:59.999');
+  const cutYM=arYM(cutoff.getFullYear(),cutoff.getMonth()+1);
+  const startYM=arAddMo(cutYM,1);
+
+  const excSet=new Set(document.getElementById('ar-exclude').value.split(/[,\n\r]/).map(s=>s.trim()).filter(Boolean));
+
+  const miss=Object.entries(arFiles).filter(([,v])=>!v).map(([k])=>k);
+  if(miss.length){ arStatus('error','❌ 缺少檔案：'+miss.join('、')); btn.disabled=false; document.getElementById('ar-loading').style.display='none'; return; }
+
+  arStatus('info','⏳ 正在解析檔案並計算中，請稍候…');
+
+  try{
+    const PERIODS=20;
+    const df={};
+    for(let i=0;i<PERIODS;i++){ const p=arAddMo(startYM,i); df[p]={P1:0,P2:0,P3:0,P4:0}; }
+    const add=(part,ym,val)=>{ if(df[ym])df[ym][part]+=val; };
+
+    // Part 1
+    const d1=await arReadFile('p1');
+    let p1Past=0;
+    for(const row of d1){
+      if(arExcluded(arCol(row,'對應訂單序號'),excSet))continue;
+      const inv=arParseDate(arCol(row,'發票日期'));
+      if(!inv||inv<new Date('2022-01-01'))continue;
+      const amt=arParseNum(arCol(row,'發票金額')); if(!amt)continue;
+      const due=arParseDate(arCol(row,'最晚付款時間'));
+      if(due&&due>cutoff){ add('P1',arDateToYM(due),amt); } else { p1Past+=amt; }
+    }
+    const p1Mo=p1Past/12, p1Start=arAddMo(startYM,5);
+    for(let i=0;i<12;i++) add('P1',arAddMo(p1Start,i),p1Mo);
+
+    // Part 2
+    const d2=await arReadFile('p2');
+    let p2Total=0;
+    for(const row of d2){
+      if(arExcluded(arCol(row,'對應訂單序號'),excSet))continue;
+      p2Total+=arParseNum(arCol(row,'發票金額'));
+    }
+    add('P2',startYM,p2Total);
+
+    // Part 3
+    const d3=await arReadFile('p3');
+    let p3Past=0;
+    for(const row of d3){
+      if(arExcluded(arCol(row,'對應訂單序號'),excSet))continue;
+      const amt=arParseNum(arCol(row,'發票金額')); if(!amt)continue;
+      const due=arParseDate(arCol(row,'最晚付款時間'));
+      if(due&&due>cutoff){ add('P3',arDateToYM(due),amt); } else { p3Past+=amt; }
+    }
+    add('P3',arAddMo(startYM,3),p3Past);
+
+    // Part 4
+    const d41=await arReadFile('p41'), d42=await arReadFile('p42');
+    let p4Uninv=0;
+    for(const row of [...d41,...d42]){
+      if(excSet.has(String(arCol(row,'ID')||'').trim()))continue;
+      p4Uninv+=(arParseNum(arCol(row,'發票金額'))-arParseNum(arCol(row,'已開立發票金額')));
+    }
+    const p4Mo=p4Uninv/12;
+    for(let i=0;i<12;i++) add('P4',arAddMo(startYM,i),p4Mo);
+
+    // 整理顯示資料
+    const rows=[];
+    for(let i=0;i<PERIODS;i++){
+      const p=arAddMo(startYM,i), r=df[p];
+      const total=r.P1+r.P2+r.P3+r.P4;
+      if(Math.abs(total)>0.01) rows.push({period:p,...r,Total:total});
+    }
+
+    arRenderResults(rows,startYM,{p1Past,p1Mo,p2Total,p3Past,p4Uninv,p4Mo});
+    arStatus('success','✅ 計算完成！共 '+rows.length+' 個月份有資料');
+    document.getElementById('ar-results').style.display='block';
+    document.getElementById('ar-results').scrollIntoView({behavior:'smooth',block:'start'});
+
+  }catch(ex){
+    console.error(ex);
+    arStatus('error','❌ 計算錯誤：'+ex.message+'（請確認欄位名稱）');
+  }
+
+  btn.disabled=false;
+  document.getElementById('ar-loading').style.display='none';
+}
+
+function arRenderResults(rows,startYM,meta){
+  const grandTotal=rows.reduce((s,r)=>s+r.Total,0);
+  const maxRow=rows.reduce((a,b)=>b.Total>a.Total?b:a,rows[0]);
+
+  document.getElementById('ar-summary-grid').innerHTML=`
+    <div class="ar-summary-card"><div class="sl">預估總收款</div><div class="sv">${arFmt(grandTotal)}</div><div class="ss">新台幣 TWD</div></div>
+    <div class="ar-summary-card"><div class="sl">最高收款月份</div><div class="sv">${maxRow?.period??'-'}</div><div class="ss">${maxRow?arFmt(maxRow.Total):'-'}</div></div>
+    <div class="ar-summary-card"><div class="sl">Part 1 月均攤提</div><div class="sv">${arFmt(meta.p1Mo)}</div><div class="ss">歷史逾期 ${arFmt(meta.p1Past)}</div></div>
+    <div class="ar-summary-card"><div class="sl">Part 2 次月入帳</div><div class="sv">${arFmt(meta.p2Total)}</div><div class="ss">認列於 ${startYM}</div></div>
+    <div class="ar-summary-card"><div class="sl">Part 4 月均攤提</div><div class="sv">${arFmt(meta.p4Mo)}</div><div class="ss">未開立 ${arFmt(meta.p4Uninv)}</div></div>`;
+
+  const parts=[
+    {k:'P1',label:'Part 1　發票未付',cls:''},
+    {k:'P2',label:'Part 2　次月已付',cls:''},
+    {k:'P3',label:'Part 3　已收支票',cls:''},
+    {k:'P4',label:'Part 4　未開立發票',cls:''},
+    {k:'Total',label:'📊 當月預估收款總額',cls:'ar-total-row'},
+  ];
+  let html='<thead><tr><th>項目 ╲ 月份</th>';
+  rows.forEach(r=>html+=`<th>${r.period}</th>`);
+  html+='</tr></thead><tbody>';
+  parts.forEach(p=>{
+    html+=`<tr class="${p.cls}"><td>${p.label}</td>`;
+    rows.forEach(r=>{ const v=Math.round(r[p.k]); html+=`<td class="${v===0?'ar-val-zero':''}">${v===0?'—':v.toLocaleString('zh-TW')}</td>`; });
+    html+='</tr>';
   });
+  html+='</tbody>';
+  document.getElementById('ar-results-table').innerHTML=html;
+}
 
-  let workbook = null;
-  function handleFile(file) {
-    const allowed = ['.xlsx', '.xls', '.csv'];
-    const ext = '.' + file.name.split('.').pop().toLowerCase();
-    if (!allowed.includes(ext)) { showError('請上傳 .xlsx、.xls 或 .csv 格式的檔案。'); return; }
-    hideError();
-    document.getElementById('file-name').style.display = 'block';
-    document.getElementById('file-name').textContent = '✅ 已選擇：' + file.name;
-    document.getElementById('calc-btn').disabled = false;
-    document.getElementById('result-box').style.display = 'none';
-    const reader = new FileReader();
-    reader.onload = e => {
-      try {
-        const data = new Uint8Array(e.target.result);
-        workbook = XLSX.read(data, { type: 'array' });
-      } catch(err) { showError('讀取檔案時發生錯誤：' + err.message); }
-    };
-    reader.readAsArrayBuffer(file);
-  }
+function arFmt(n){ return Math.round(n).toLocaleString('zh-TW'); }
 
-  // ── 計算邏輯 ──
-  function calculate() {
-    hideError();
-    if (!workbook) { showError('請先上傳檔案。'); return; }
-    document.getElementById('loading').style.display = 'flex';
-    document.getElementById('calc-btn').disabled = true;
-    setTimeout(() => {
-      try {
-        let sheetName = workbook.SheetNames.find(n => n.includes('現有庫存報表')) || workbook.SheetNames[0];
-        const ws   = workbook.Sheets[sheetName];
-        const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
-        if (rows.length === 0) { showError('工作表內沒有資料，請確認檔案格式。'); return; }
+function arStatus(type,msg){
+  const el=document.getElementById('ar-status');
+  el.className='ar-status '+type; el.textContent=msg; el.style.display='block';
+}
 
-        let totalBuyout = 0, totalTemp = 0;
-        const details = [];
-        rows.forEach(row => {
-          const vendor   = String(row['採購廠商序號'] || '').trim();
-          const rawPrice = parseFloat(row['平均進貨價']) || 0;
-          const buyQty   = parseFloat(row['買斷庫存'])   || 0;
-          const tempQty  = parseFloat(row['暫時庫存(待出貨庫存)']) || 0;
-          let adjPrice, adjLabel;
-          if      (vendor === 'VD0001152') { adjPrice = rawPrice * 0.82; adjLabel = '×0.82'; }
-          else if (vendor === 'VD0000096') { adjPrice = rawPrice * 0.97; adjLabel = '×0.97'; }
-          else                             { adjPrice = rawPrice;         adjLabel = '—';     }
-          const buyAmount  = buyQty * adjPrice;
-          const tempAmount = tempQty > 0 ? adjPrice * tempQty : 0;
-          totalBuyout += buyAmount;
-          totalTemp   += tempAmount;
-          details.push({ vendor, rawPrice, adjPrice, adjLabel, buyQty, buyAmount, tempQty, tempAmount });
-        });
-        renderResults(totalBuyout, totalTemp, details, rows.length);
-      } catch(err) {
-        showError('計算時發生錯誤：' + err.message);
-      } finally {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('calc-btn').disabled = false;
-      }
-    }, 100);
-  }
-
-  function fmt(n) {
-    return n.toLocaleString('zh-TW', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-  function renderResults(totalBuyout, totalTemp, details, rowCount) {
-    document.getElementById('total-buyout').textContent = fmt(totalBuyout);
-    document.getElementById('total-temp').textContent   = fmt(totalTemp);
-    const adjusted = details.filter(d => d.adjLabel !== '—').length;
-    document.getElementById('summary-row').innerHTML =
-      `<span>共 ${rowCount} 筆資料</span><span>價格調整：${adjusted} 筆</span>`;
-    const tbody = document.getElementById('detail-body');
-    tbody.innerHTML = '';
-    details.forEach(d => {
-      const tr = document.createElement('tr');
-      const isAdj = d.adjLabel !== '—';
-      tr.innerHTML = `
-        <td>${d.vendor || '（未填）'}</td>
-        <td>${fmt(d.rawPrice)}</td>
-        <td>${fmt(d.adjPrice)}</td>
-        <td><span class="tag ${isAdj ? 'tag-adjusted' : 'tag-normal'}">${isAdj ? d.adjLabel : '未調整'}</span></td>
-        <td>${d.buyQty.toLocaleString()}</td>
-        <td>${fmt(d.buyAmount)}</td>
-        <td>${d.tempQty.toLocaleString()}</td>
-        <td>${fmt(d.tempAmount)}</td>`;
-      tbody.appendChild(tr);
-    });
-    document.getElementById('result-box').style.display = 'block';
-    document.getElementById('result-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-  function reset() {
-    workbook = null;
-    document.getElementById('file-input').value = '';
-    document.getElementById('file-name').style.display = 'none';
-    document.getElementById('calc-btn').disabled = true;
-    document.getElementById('result-box').style.display = 'none';
-    hideError();
-  }
-
-  // ── Email 功能 ──
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbzVtM6JkxxtDWTLGzyftmMwhwH6xNaKjzaTfCSkBUyi4JtQytrWAXAGtDUQJPBJoPLL/exec';
-  function runEmail() {
-    document.getElementById('email-loading').style.display = 'flex';
-    document.getElementById('email-result-box').style.display = 'none';
-    document.getElementById('email-error').style.display = 'none';
-    var cbName = 'gasEmailCb_' + Date.now();
-    var script = document.createElement('script');
-    window[cbName] = function(data) {
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-      document.getElementById('email-loading').style.display = 'none';
-      if (!data.success) {
-        document.getElementById('email-error').textContent = '⚠️ GAS 回傳錯誤，請稍後再試。';
-        document.getElementById('email-error').style.display = 'block';
-        return;
-      }
-      renderEmail(data);
-    };
-    script.onerror = function() {
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-      document.getElementById('email-loading').style.display = 'none';
-      document.getElementById('email-error').textContent = '⚠️ 執行失敗，請確認 GAS 已正確部署且有存取權限。';
-      document.getElementById('email-error').style.display = 'block';
-    };
-    script.src = GAS_URL + '?action=runEmail&callback=' + cbName;
-    document.head.appendChild(script);
-  }
-  function renderEmail(data) {
-    document.getElementById('stat-reply').textContent  = data.needReply.length;
-    document.getElementById('stat-track').textContent  = data.toTrack.length;
-    document.getElementById('stat-marked').textContent = data.markedCount;
-    document.getElementById('email-fetch-time').textContent =
-      '資料擷取時間：' + data.fetchedAt + ' 共收到 ' + data.total + ' 封';
-    renderEmailSection('section-reply', '需要回覆',  data.needReply,  'reply-hdr', '🔴');
-    renderEmailSection('section-track', '待辦追蹤',  data.toTrack,    'track-hdr', '🟡');
-    renderEmailSection('section-ref',   '參考資訊',  data.reference,  'ref-hdr',   '⚪');
-    document.getElementById('email-result-box').style.display = 'block';
-    document.getElementById('email-result-box').scrollIntoView({ behavior: 'smooth' });
-  }
-  function renderEmailSection(containerId, title, items, hdrClass, dot) {
-    const container = document.getElementById(containerId);
-    if (items.length === 0) { container.innerHTML = ''; return; }
-    let html = `<div class="email-section-header ${hdrClass}">
-      ${dot} ${title}
-      <span class="count-badge">${items.length} 封</span>
-    </div><div class="email-list">`;
-    items.forEach(item => {
-      const tagHtml = item.tag === 'lockincenter'
-        ? '<span class="email-tag">lockincenter</span>' : '';
-      html += `<div class="email-item">
-        <div class="email-item-top">
-          <span class="email-from">${escHtml(item.from)}${tagHtml}</span>
-          <span class="email-date">${escHtml(item.date)}</span>
-        </div>
-        <div class="email-subject">${escHtml(item.subject)}</div>
-        <div class="email-snippet">${escHtml(item.snippet)}</div>
-      </div>`;
-    });
-    html += '</div>';
-    container.innerHTML = html;
-  }
-  function escHtml(s) {
-    return String(s || '')
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-  function showError(msg) {
-    const el = document.getElementById('error-msg');
-    el.textContent = '⚠️ ' + msg;
-    el.style.display = 'block';
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('calc-btn').disabled = false;
-  }
-  function hideError() {
-    document.getElementById('error-msg').style.display = 'none';
-  }
+function arReset(){
+  Object.keys(arFiles).forEach(k=>{
+    arFiles[k]=null;
+    document.getElementById('ar-stat-'+k).textContent='';
+    document.getElementById('ar-fname-'+k).textContent='';
+    document.getElementById('ar-area-'+k).classList.remove('ready','dragover');
+  });
+  const el=document.getElementById('ar-status'); el.className='ar-status'; el.style.display='none';
+  document.getElementById('ar-results').style.display='none';
+  document.getElementById('ar-calc-btn').disabled=false;
+  document.getElementById('ar-loading').style.display='none';
+}
 </script>
 </body>
 </html>
