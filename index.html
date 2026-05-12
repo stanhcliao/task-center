@@ -7,7 +7,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
       background: #f0f2f5;
@@ -15,7 +14,6 @@
       height: 100vh;
       overflow: hidden;
     }
-
     /* ── 側邊欄 ── */
     .sidebar {
       width: 240px;
@@ -25,457 +23,155 @@
       flex-direction: column;
       flex-shrink: 0;
     }
-
     .sidebar-header {
       padding: 24px 20px 16px;
       border-bottom: 1px solid #2d3448;
     }
-
-    .sidebar-header h1 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: 0.5px;
-    }
-
-    .sidebar-header p {
-      font-size: 11px;
-      color: #6b7897;
-      margin-top: 4px;
-    }
-
-    .sidebar-section {
-      padding: 16px 12px 8px;
-    }
-
+    .sidebar-header h1 { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+    .sidebar-header p  { font-size: 11px; color: #6b7897; margin-top: 4px; }
+    .sidebar-section { padding: 16px 12px 8px; }
     .sidebar-section-label {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #4a5568;
-      padding: 0 8px;
-      margin-bottom: 6px;
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: #4a5568; padding: 0 8px; margin-bottom: 6px;
     }
-
     .sidebar-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 13px;
-      color: #8a95ab;
-      transition: all 0.15s;
-      margin-bottom: 2px;
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 8px; cursor: pointer;
+      font-size: 13px; color: #8a95ab; transition: all 0.15s; margin-bottom: 2px;
     }
-
-    .sidebar-item:hover {
-      background: #252b3d;
-      color: #cdd5e0;
-    }
-
-    .sidebar-item.active {
-      background: #2563eb20;
-      color: #60a5fa;
-      font-weight: 600;
-    }
-
-    .sidebar-item .icon {
-      font-size: 15px;
-      width: 20px;
-      text-align: center;
-    }
-
+    .sidebar-item:hover { background: #252b3d; color: #cdd5e0; }
+    .sidebar-item.active { background: #2563eb20; color: #60a5fa; font-weight: 600; }
+    .sidebar-item .icon { font-size: 15px; width: 20px; text-align: center; }
     .sidebar-item .badge {
-      margin-left: auto;
-      background: #2563eb;
-      color: #fff;
-      font-size: 10px;
-      padding: 1px 6px;
-      border-radius: 10px;
-      font-weight: 700;
+      margin-left: auto; background: #2563eb; color: #fff;
+      font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 700;
     }
-
-    .sidebar-item .coming-soon {
-      margin-left: auto;
-      font-size: 10px;
-      color: #4a5568;
-      font-style: italic;
-    }
-
+    .sidebar-item .coming-soon { margin-left: auto; font-size: 10px; color: #4a5568; font-style: italic; }
     /* ── 主內容 ── */
-    .main {
-      flex: 1;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    }
-
+    .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
     .topbar {
-      background: #fff;
-      border-bottom: 1px solid #e5e9f0;
-      padding: 0 28px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
+      background: #fff; border-bottom: 1px solid #e5e9f0;
+      padding: 0 28px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
     }
-
-    .topbar-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1a1f2e;
-    }
-
-    .topbar-date {
-      font-size: 12px;
-      color: #8a95ab;
-    }
-
-    .content {
-      padding: 28px;
-      flex: 1;
-    }
-
+    .topbar-title { font-size: 15px; font-weight: 700; color: #1a1f2e; }
+    .topbar-date  { font-size: 12px; color: #8a95ab; }
+    .content { padding: 28px; flex: 1; }
     /* ── 頁面切換 ── */
     .page { display: none; }
     .page.active { display: block; }
-
     /* ── 卡片 ── */
     .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-      margin-bottom: 20px;
+      background: #fff; border-radius: 12px; padding: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 20px;
     }
-
-    .card-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: #1a1f2e;
-      margin-bottom: 6px;
-    }
-
-    .card-desc {
-      font-size: 12px;
-      color: #8a95ab;
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-
+    .card-title { font-size: 14px; font-weight: 700; color: #1a1f2e; margin-bottom: 6px; }
+    .card-desc  { font-size: 12px; color: #8a95ab; margin-bottom: 20px; line-height: 1.6; }
     /* ── 上傳區 ── */
     .upload-area {
-      border: 2px dashed #c7d2e8;
-      border-radius: 10px;
-      padding: 32px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: #f8faff;
-      position: relative;
+      border: 2px dashed #c7d2e8; border-radius: 10px; padding: 32px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+      background: #f8faff; position: relative;
     }
-
-    .upload-area:hover, .upload-area.dragover {
-      border-color: #2563eb;
-      background: #eff4ff;
-    }
-
+    .upload-area:hover, .upload-area.dragover { border-color: #2563eb; background: #eff4ff; }
     .upload-area input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
     }
-
     .upload-icon { font-size: 36px; margin-bottom: 10px; }
-
-    .upload-area p {
-      font-size: 13px;
-      color: #4a5568;
-    }
-
-    .upload-area .hint {
-      font-size: 11px;
-      color: #a0aec0;
-      margin-top: 6px;
-    }
-
-    .file-name {
-      margin-top: 12px;
-      font-size: 12px;
-      color: #2563eb;
-      font-weight: 600;
-      display: none;
-    }
-
+    .upload-area p { font-size: 13px; color: #4a5568; }
+    .upload-area .hint { font-size: 11px; color: #a0aec0; margin-top: 6px; }
+    .file-name { margin-top: 12px; font-size: 12px; color: #2563eb; font-weight: 600; display: none; }
     /* ── 按鈕 ── */
     .btn {
-      padding: 10px 22px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: all 0.15s;
+      padding: 10px 22px; border-radius: 8px; font-size: 13px;
+      font-weight: 600; cursor: pointer; border: none; transition: all 0.15s;
     }
-
-    .btn-primary {
-      background: #2563eb;
-      color: #fff;
-    }
-
+    .btn-primary { background: #2563eb; color: #fff; }
     .btn-primary:hover { background: #1d4ed8; }
     .btn-primary:disabled { background: #93afd8; cursor: not-allowed; }
-
-    .btn-secondary {
-      background: #f0f2f5;
-      color: #4a5568;
-    }
-
+    .btn-secondary { background: #f0f2f5; color: #4a5568; }
     .btn-secondary:hover { background: #e2e8f0; }
-
-    .btn-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
-      align-items: center;
-    }
-
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
     /* ── 結果 ── */
-    .result-box {
-      display: none;
-      margin-top: 24px;
-    }
-
-    .result-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .result-card {
-      border-radius: 10px;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .result-card.buyout {
-      background: linear-gradient(135deg, #1e40af, #2563eb);
-      color: #fff;
-    }
-
-    .result-card.temp {
-      background: linear-gradient(135deg, #065f46, #059669);
-      color: #fff;
-    }
-
-    .result-card .label {
-      font-size: 11px;
-      opacity: 0.8;
-      margin-bottom: 8px;
-      letter-spacing: 0.5px;
-    }
-
-    .result-card .amount {
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .result-card .unit {
-      font-size: 11px;
-      opacity: 0.7;
-      margin-top: 4px;
-    }
-
+    .result-box { display: none; margin-top: 24px; }
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .result-card { border-radius: 10px; padding: 20px; text-align: center; }
+    .result-card.buyout { background: linear-gradient(135deg, #1e40af, #2563eb); color: #fff; }
+    .result-card.temp   { background: linear-gradient(135deg, #065f46, #059669); color: #fff; }
+    .result-card .label  { font-size: 11px; opacity: 0.8; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .result-card .amount { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+    .result-card .unit   { font-size: 11px; opacity: 0.7; margin-top: 4px; }
     /* ── 詳細表格 ── */
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: 8px;
-      border: 1px solid #e5e9f0;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-
+    .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid #e5e9f0; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
     thead th {
-      background: #f8faff;
-      padding: 10px 12px;
-      text-align: left;
-      font-weight: 700;
-      color: #4a5568;
-      border-bottom: 1px solid #e5e9f0;
-      white-space: nowrap;
+      background: #f8faff; padding: 10px 12px; text-align: left;
+      font-weight: 700; color: #4a5568; border-bottom: 1px solid #e5e9f0; white-space: nowrap;
     }
-
-    tbody td {
-      padding: 9px 12px;
-      border-bottom: 1px solid #f0f2f5;
-      color: #2d3748;
-    }
-
+    tbody td { padding: 9px 12px; border-bottom: 1px solid #f0f2f5; color: #2d3748; }
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover td { background: #f8faff; }
-
-    .tag {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 10px;
-      font-weight: 700;
-    }
-
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; }
     .tag-adjusted { background: #fef3c7; color: #92400e; }
-    .tag-normal { background: #f0f4ff; color: #3730a3; }
-
+    .tag-normal   { background: #f0f4ff; color: #3730a3; }
     /* ── Loading ── */
-    .loading {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: #2563eb;
-    }
-
+    .loading { display: none; align-items: center; gap: 8px; font-size: 13px; color: #2563eb; }
     .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid #dbeafe;
-      border-top-color: #2563eb;
-      border-radius: 50%;
+      width: 16px; height: 16px; border: 2px solid #dbeafe;
+      border-top-color: #2563eb; border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
-
     /* ── Email 功能 ── */
-    .email-stat-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .email-stat {
-      border-radius: 10px;
-      padding: 16px;
-      text-align: center;
-    }
+    .email-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .email-stat { border-radius: 10px; padding: 16px; text-align: center; }
     .email-stat.reply  { background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff; }
     .email-stat.track  { background: linear-gradient(135deg, #0369a1, #38bdf8); color: #fff; }
     .email-stat.marked { background: linear-gradient(135deg, #065f46, #34d399); color: #fff; }
     .email-stat .stat-num   { font-size: 28px; font-weight: 800; }
     .email-stat .stat-label { font-size: 11px; opacity: 0.85; margin-top: 4px; }
-
     .email-section { margin-bottom: 16px; }
     .email-section-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-radius: 8px 8px 0 0;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      user-select: none;
+      display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+      border-radius: 8px 8px 0 0; font-size: 13px; font-weight: 700;
+      cursor: pointer; user-select: none;
     }
-    .email-section-header.reply-hdr  { background: #ede9fe; color: #5b21b6; }
-    .email-section-header.track-hdr  { background: #e0f2fe; color: #0369a1; }
-    .email-section-header.ref-hdr    { background: #f0fdf4; color: #166534; }
+    .email-section-header.reply-hdr { background: #ede9fe; color: #5b21b6; }
+    .email-section-header.track-hdr { background: #e0f2fe; color: #0369a1; }
+    .email-section-header.ref-hdr   { background: #f0fdf4; color: #166534; }
     .email-section-header .count-badge {
-      margin-left: auto;
-      background: rgba(0,0,0,0.12);
-      border-radius: 10px;
-      padding: 1px 8px;
-      font-size: 11px;
+      margin-left: auto; background: rgba(0,0,0,0.12);
+      border-radius: 10px; padding: 1px 8px; font-size: 11px;
     }
-    .email-list {
-      border: 1px solid #e5e9f0;
-      border-top: none;
-      border-radius: 0 0 8px 8px;
-      overflow: hidden;
-    }
-    .email-item {
-      padding: 12px 16px;
-      border-bottom: 1px solid #f0f2f5;
-      transition: background 0.1s;
-    }
+    .email-list { border: 1px solid #e5e9f0; border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
+    .email-item { padding: 12px 16px; border-bottom: 1px solid #f0f2f5; transition: background 0.1s; }
     .email-item:last-child { border-bottom: none; }
     .email-item:hover { background: #f8faff; }
-    .email-item-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 4px;
-    }
-    .email-from   { font-size: 13px; font-weight: 700; color: #1a1f2e; }
-    .email-date   { font-size: 11px; color: #8a95ab; flex-shrink: 0; margin-left: 8px; }
+    .email-item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+    .email-from    { font-size: 13px; font-weight: 700; color: #1a1f2e; }
+    .email-date    { font-size: 11px; color: #8a95ab; flex-shrink: 0; margin-left: 8px; }
     .email-subject { font-size: 12px; color: #2d3748; margin-bottom: 4px; }
     .email-snippet { font-size: 11px; color: #8a95ab; line-height: 1.5; }
     .email-tag {
-      display: inline-block;
-      padding: 1px 6px;
-      border-radius: 10px;
-      font-size: 10px;
-      font-weight: 700;
-      background: #fef3c7;
-      color: #92400e;
-      margin-left: 6px;
+      display: inline-block; padding: 1px 6px; border-radius: 10px;
+      font-size: 10px; font-weight: 700; background: #fef3c7; color: #92400e; margin-left: 6px;
     }
     .email-result-box { display: none; }
-    .email-fetch-time {
-      font-size: 11px;
-      color: #8a95ab;
-      text-align: right;
-      margin-bottom: 12px;
-    }
-
+    .email-fetch-time { font-size: 11px; color: #8a95ab; text-align: right; margin-bottom: 12px; }
     /* ── 即將上線 placeholder ── */
-    .placeholder {
-      text-align: center;
-      padding: 60px 20px;
-      color: #a0aec0;
-    }
-
+    .placeholder { text-align: center; padding: 60px 20px; color: #a0aec0; }
     .placeholder .emoji { font-size: 48px; margin-bottom: 16px; }
     .placeholder h3 { font-size: 16px; color: #4a5568; margin-bottom: 8px; }
-    .placeholder p { font-size: 13px; line-height: 1.6; }
-
+    .placeholder p  { font-size: 13px; line-height: 1.6; }
     /* ── 錯誤訊息 ── */
     .error-msg {
-      display: none;
-      background: #fff5f5;
-      border: 1px solid #fed7d7;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-top: 16px;
-      font-size: 12px;
-      color: #c53030;
+      display: none; background: #fff5f5; border: 1px solid #fed7d7;
+      border-radius: 8px; padding: 12px 16px; margin-top: 16px;
+      font-size: 12px; color: #c53030;
     }
-
     /* ── 摘要列 ── */
-    .summary-row {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 16px;
-      font-size: 12px;
-      color: #4a5568;
-    }
-
-    .summary-row span {
-      background: #f0f4ff;
-      padding: 4px 10px;
-      border-radius: 6px;
-    }
+    .summary-row { display: flex; gap: 16px; margin-bottom: 16px; font-size: 12px; color: #4a5568; }
+    .summary-row span { background: #f0f4ff; padding: 4px 10px; border-radius: 6px; }
   </style>
 </head>
 <body>
@@ -486,26 +182,22 @@
     <h1>📋 任務中心</h1>
     <p>Stan 的自動化工作台</p>
   </div>
-
   <div class="sidebar-section">
     <div class="sidebar-section-label">每日任務</div>
     <div class="sidebar-item" id="nav-email" onclick="goTo('email')">
-      <span class="icon">✉️</span>
-      整理 Email
+      <span class="icon">✉️</span> 整理 Email
     </div>
   </div>
-
   <div class="sidebar-section">
     <div class="sidebar-section-label">每月任務</div>
     <div class="sidebar-item active" id="nav-inventory" onclick="goTo('inventory')">
-      <span class="icon">📦</span>
-      庫存金額計算
+      <span class="icon">📦</span> 庫存金額計算
       <span class="badge">NEW</span>
     </div>
-    <div class="sidebar-item" onclick="goTo('ar-ap')">
-      <span class="icon">💰</span>
-      應收應付計算
-      <span class="coming-soon">即將上線</span>
+    <!-- ★ 修改：直接開新分頁到 ar-calculator.html -->
+    <div class="sidebar-item" onclick="window.open('ar-calculator.html','_blank')">
+      <span class="icon">💰</span> 應收應付計算
+      <span class="badge" style="background:#059669">NEW</span>
     </div>
   </div>
 </div>
@@ -516,7 +208,6 @@
     <div class="topbar-title" id="page-title">📦 庫存金額計算</div>
     <div class="topbar-date" id="today-date"></div>
   </div>
-
   <div class="content">
 
     <!-- 庫存計算頁 -->
@@ -527,7 +218,6 @@
           上傳從公司系統匯出的 Excel 報表（需包含「現有庫存報表」工作表）。<br>
           系統將自動依廠商序號調整價格，計算買斷與暫時庫存金額。
         </div>
-
         <div class="upload-area" id="upload-area">
           <input type="file" id="file-input" accept=".xlsx,.xls,.csv" />
           <div class="upload-icon">📂</div>
@@ -536,17 +226,14 @@
         </div>
         <div class="file-name" id="file-name"></div>
         <div class="error-msg" id="error-msg"></div>
-
         <div class="btn-row">
           <button class="btn btn-primary" id="calc-btn" onclick="calculate()" disabled>開始計算</button>
           <button class="btn btn-secondary" onclick="reset()">重置</button>
           <div class="loading" id="loading">
-            <div class="spinner"></div>
-            計算中...
+            <div class="spinner"></div> 計算中...
           </div>
         </div>
       </div>
-
       <!-- 結果區 -->
       <div class="result-box" id="result-box">
         <div class="result-grid">
@@ -561,7 +248,6 @@
             <div class="unit">新台幣 (TWD)</div>
           </div>
         </div>
-
         <div class="card">
           <div class="card-title">明細資料</div>
           <div class="summary-row" id="summary-row"></div>
@@ -597,18 +283,14 @@
         <div class="btn-row">
           <button class="btn btn-primary" onclick="runEmail()">▶ 開始整理 Email</button>
           <div class="loading" id="email-loading">
-            <div class="spinner"></div>
-            整理中，約需 20-30 秒...
+            <div class="spinner"></div> 整理中，約需 20-30 秒...
           </div>
         </div>
         <div class="error-msg" id="email-error"></div>
       </div>
-
       <!-- 結果區 -->
       <div class="email-result-box" id="email-result-box">
         <div class="email-fetch-time" id="email-fetch-time"></div>
-
-        <!-- 統計卡片 -->
         <div class="email-stat-grid">
           <div class="email-stat reply">
             <div class="stat-num" id="stat-reply">0</div>
@@ -623,23 +305,25 @@
             <div class="stat-label">已標示已讀</div>
           </div>
         </div>
-
-        <!-- 需要回覆 -->
         <div class="email-section" id="section-reply"></div>
-        <!-- 待辦追蹤 -->
         <div class="email-section" id="section-track"></div>
-        <!-- 參考資訊 -->
         <div class="email-section" id="section-ref"></div>
       </div>
     </div>
 
-    <!-- 應收應付頁（即將上線）-->
+    <!-- ★ 應收應付頁：改成跳轉提示 -->
     <div class="page" id="page-ar-ap">
       <div class="card">
         <div class="placeholder">
           <div class="emoji">💰</div>
           <h3>應收應付計算</h3>
-          <p>上傳報表，自動計算應收帳款與應付帳款金額。<br>此功能即將整合至任務中心。</p>
+          <p>上傳五份月報表，自動計算各月份應收帳款預估金額。</p>
+          <br>
+          <a href="ar-calculator.html" target="_blank"
+             class="btn btn-primary"
+             style="display:inline-block;text-decoration:none;margin-top:12px;">
+            🚀 開啟計算工具
+          </a>
         </div>
       </div>
     </div>
@@ -651,15 +335,16 @@
   // ── 今日日期 ──
   const dateEl = document.getElementById('today-date');
   const now = new Date();
-  dateEl.textContent = now.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+  dateEl.textContent = now.toLocaleDateString('zh-TW', {
+    year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
+  });
 
   // ── 頁面切換 ──
   const pageMap = {
     inventory: { pageId: 'page-inventory', title: '📦 庫存金額計算', navId: 'nav-inventory' },
-    email:     { pageId: 'page-email',     title: '✉️ 整理 Email',   navId: 'nav-email' },
-    'ar-ap':   { pageId: 'page-ar-ap',     title: '💰 應收應付計算',  navId: null },
+    email:     { pageId: 'page-email',     title: '✉️ 整理 Email',   navId: 'nav-email'      },
+    'ar-ap':   { pageId: 'page-ar-ap',     title: '💰 應收應付計算', navId: null              },
   };
-
   function goTo(key) {
     const cfg = pageMap[key];
     if (!cfg) return;
@@ -672,7 +357,7 @@
 
   // ── 上傳區拖曳效果 ──
   const uploadArea = document.getElementById('upload-area');
-  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+  uploadArea.addEventListener('dragover',  e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
   uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
   uploadArea.addEventListener('drop', e => {
     e.preventDefault();
@@ -680,34 +365,26 @@
     const file = e.dataTransfer.files[0];
     if (file) handleFile(file);
   });
-
   document.getElementById('file-input').addEventListener('change', e => {
     if (e.target.files[0]) handleFile(e.target.files[0]);
   });
 
   let workbook = null;
-
   function handleFile(file) {
     const allowed = ['.xlsx', '.xls', '.csv'];
     const ext = '.' + file.name.split('.').pop().toLowerCase();
-    if (!allowed.includes(ext)) {
-      showError('請上傳 .xlsx、.xls 或 .csv 格式的檔案。');
-      return;
-    }
+    if (!allowed.includes(ext)) { showError('請上傳 .xlsx、.xls 或 .csv 格式的檔案。'); return; }
     hideError();
     document.getElementById('file-name').style.display = 'block';
     document.getElementById('file-name').textContent = '✅ 已選擇：' + file.name;
     document.getElementById('calc-btn').disabled = false;
     document.getElementById('result-box').style.display = 'none';
-
     const reader = new FileReader();
     reader.onload = e => {
       try {
         const data = new Uint8Array(e.target.result);
         workbook = XLSX.read(data, { type: 'array' });
-      } catch(err) {
-        showError('讀取檔案時發生錯誤：' + err.message);
-      }
+      } catch(err) { showError('讀取檔案時發生錯誤：' + err.message); }
     };
     reader.readAsArrayBuffer(file);
   }
@@ -716,55 +393,33 @@
   function calculate() {
     hideError();
     if (!workbook) { showError('請先上傳檔案。'); return; }
-
     document.getElementById('loading').style.display = 'flex';
     document.getElementById('calc-btn').disabled = true;
-
     setTimeout(() => {
       try {
-        // 找工作表：優先找「現有庫存報表」，否則用第一張
         let sheetName = workbook.SheetNames.find(n => n.includes('現有庫存報表')) || workbook.SheetNames[0];
-        const ws = workbook.Sheets[sheetName];
+        const ws   = workbook.Sheets[sheetName];
         const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
-
         if (rows.length === 0) { showError('工作表內沒有資料，請確認檔案格式。'); return; }
 
         let totalBuyout = 0, totalTemp = 0;
         const details = [];
-
         rows.forEach(row => {
           const vendor   = String(row['採購廠商序號'] || '').trim();
           const rawPrice = parseFloat(row['平均進貨價']) || 0;
-          const buyQty   = parseFloat(row['買斷庫存']) || 0;
+          const buyQty   = parseFloat(row['買斷庫存'])   || 0;
           const tempQty  = parseFloat(row['暫時庫存(待出貨庫存)']) || 0;
-
-          // 1. 調整後價格
           let adjPrice, adjLabel;
-          if (vendor === 'VD0001152') {
-            adjPrice = rawPrice * 0.82;
-            adjLabel = '×0.82';
-          } else if (vendor === 'VD0000096') {
-            adjPrice = rawPrice * 0.97;
-            adjLabel = '×0.97';
-          } else {
-            adjPrice = rawPrice;
-            adjLabel = '—';
-          }
-
-          // 2. 買斷庫存金額
-          const buyAmount = buyQty * adjPrice;
-
-          // 3. 暫時庫存金額
+          if      (vendor === 'VD0001152') { adjPrice = rawPrice * 0.82; adjLabel = '×0.82'; }
+          else if (vendor === 'VD0000096') { adjPrice = rawPrice * 0.97; adjLabel = '×0.97'; }
+          else                             { adjPrice = rawPrice;         adjLabel = '—';     }
+          const buyAmount  = buyQty * adjPrice;
           const tempAmount = tempQty > 0 ? adjPrice * tempQty : 0;
-
           totalBuyout += buyAmount;
           totalTemp   += tempAmount;
-
           details.push({ vendor, rawPrice, adjPrice, adjLabel, buyQty, buyAmount, tempQty, tempAmount });
         });
-
         renderResults(totalBuyout, totalTemp, details, rows.length);
-
       } catch(err) {
         showError('計算時發生錯誤：' + err.message);
       } finally {
@@ -777,17 +432,12 @@
   function fmt(n) {
     return n.toLocaleString('zh-TW', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
-
   function renderResults(totalBuyout, totalTemp, details, rowCount) {
     document.getElementById('total-buyout').textContent = fmt(totalBuyout);
     document.getElementById('total-temp').textContent   = fmt(totalTemp);
-
-    // 摘要
     const adjusted = details.filter(d => d.adjLabel !== '—').length;
     document.getElementById('summary-row').innerHTML =
       `<span>共 ${rowCount} 筆資料</span><span>價格調整：${adjusted} 筆</span>`;
-
-    // 明細
     const tbody = document.getElementById('detail-body');
     tbody.innerHTML = '';
     details.forEach(d => {
@@ -801,15 +451,12 @@
         <td>${d.buyQty.toLocaleString()}</td>
         <td>${fmt(d.buyAmount)}</td>
         <td>${d.tempQty.toLocaleString()}</td>
-        <td>${fmt(d.tempAmount)}</td>
-      `;
+        <td>${fmt(d.tempAmount)}</td>`;
       tbody.appendChild(tr);
     });
-
     document.getElementById('result-box').style.display = 'block';
     document.getElementById('result-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-
   function reset() {
     workbook = null;
     document.getElementById('file-input').value = '';
@@ -821,15 +468,12 @@
 
   // ── Email 功能 ──
   const GAS_URL = 'https://script.google.com/macros/s/AKfycbzVtM6JkxxtDWTLGzyftmMwhwH6xNaKjzaTfCSkBUyi4JtQytrWAXAGtDUQJPBJoPLL/exec';
-
   function runEmail() {
     document.getElementById('email-loading').style.display = 'flex';
     document.getElementById('email-result-box').style.display = 'none';
     document.getElementById('email-error').style.display = 'none';
-
     var cbName = 'gasEmailCb_' + Date.now();
     var script = document.createElement('script');
-
     window[cbName] = function(data) {
       delete window[cbName];
       if (script.parentNode) script.parentNode.removeChild(script);
@@ -841,7 +485,6 @@
       }
       renderEmail(data);
     };
-
     script.onerror = function() {
       delete window[cbName];
       if (script.parentNode) script.parentNode.removeChild(script);
@@ -849,33 +492,28 @@
       document.getElementById('email-error').textContent = '⚠️ 執行失敗，請確認 GAS 已正確部署且有存取權限。';
       document.getElementById('email-error').style.display = 'block';
     };
-
     script.src = GAS_URL + '?action=runEmail&callback=' + cbName;
     document.head.appendChild(script);
   }
-
   function renderEmail(data) {
     document.getElementById('stat-reply').textContent  = data.needReply.length;
     document.getElementById('stat-track').textContent  = data.toTrack.length;
     document.getElementById('stat-marked').textContent = data.markedCount;
-    document.getElementById('email-fetch-time').textContent = '資料擷取時間：' + data.fetchedAt + '　共收到 ' + data.total + ' 封';
-
-    renderEmailSection('section-reply', '需要回覆', data.needReply, 'reply-hdr', '🔴');
-    renderEmailSection('section-track', '待辦追蹤', data.toTrack,   'track-hdr', '🟡');
-    renderEmailSection('section-ref',   '參考資訊', data.reference, 'ref-hdr',   '⚪');
-
+    document.getElementById('email-fetch-time').textContent =
+      '資料擷取時間：' + data.fetchedAt + ' 共收到 ' + data.total + ' 封';
+    renderEmailSection('section-reply', '需要回覆',  data.needReply,  'reply-hdr', '🔴');
+    renderEmailSection('section-track', '待辦追蹤',  data.toTrack,    'track-hdr', '🟡');
+    renderEmailSection('section-ref',   '參考資訊',  data.reference,  'ref-hdr',   '⚪');
     document.getElementById('email-result-box').style.display = 'block';
     document.getElementById('email-result-box').scrollIntoView({ behavior: 'smooth' });
   }
-
   function renderEmailSection(containerId, title, items, hdrClass, dot) {
     const container = document.getElementById(containerId);
     if (items.length === 0) { container.innerHTML = ''; return; }
     let html = `<div class="email-section-header ${hdrClass}">
       ${dot} ${title}
       <span class="count-badge">${items.length} 封</span>
-    </div>
-    <div class="email-list">`;
+    </div><div class="email-list">`;
     items.forEach(item => {
       const tagHtml = item.tag === 'lockincenter'
         ? '<span class="email-tag">lockincenter</span>' : '';
@@ -891,11 +529,11 @@
     html += '</div>';
     container.innerHTML = html;
   }
-
   function escHtml(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(s || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
-
   function showError(msg) {
     const el = document.getElementById('error-msg');
     el.textContent = '⚠️ ' + msg;
@@ -903,7 +541,6 @@
     document.getElementById('loading').style.display = 'none';
     document.getElementById('calc-btn').disabled = false;
   }
-
   function hideError() {
     document.getElementById('error-msg').style.display = 'none';
   }
