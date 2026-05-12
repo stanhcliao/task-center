@@ -573,6 +573,7 @@ const pageMap = {
   inventory: { pageId: 'page-inventory', title: '📦 庫存金額計算', navId: 'nav-inventory' },
   email:     { pageId: 'page-email',     title: '✉️ 整理 Email',   navId: 'nav-email'     },
   'ar-ap':   { pageId: 'page-ar-ap',     title: '💰 應收應付計算', navId: 'nav-ar'        },
+  recording: { pageId: 'page-recording', title: '📞 每週錄音下載', navId: 'nav-recording' },
 };
 function goTo(key) {
   const cfg = pageMap[key]; if (!cfg) return;
@@ -735,7 +736,6 @@ function arReadFile(key){
         for(const h of (AR_SHEET_HINTS[key]||[])){ if(wb.SheetNames.includes(h)){sn=h;break;} }
         ok(XLSX.utils.sheet_to_json(wb.Sheets[sn],{raw:true,defval:null}));
       }catch(ex){fail(ex);}
-        recording: { pageId: 'page-recording', title: '📞 每週錄音下載',   navId: 'nav-recording' },
     };
     r.onerror=fail; r.readAsArrayBuffer(arFiles[key]);
   });
