@@ -358,6 +358,87 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ── Email 功能 ── */
+    .email-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .email-stat {
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .email-stat.reply  { background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff; }
+    .email-stat.track  { background: linear-gradient(135deg, #0369a1, #38bdf8); color: #fff; }
+    .email-stat.marked { background: linear-gradient(135deg, #065f46, #34d399); color: #fff; }
+    .email-stat .stat-num   { font-size: 28px; font-weight: 800; }
+    .email-stat .stat-label { font-size: 11px; opacity: 0.85; margin-top: 4px; }
+
+    .email-section { margin-bottom: 16px; }
+    .email-section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 8px 8px 0 0;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+    }
+    .email-section-header.reply-hdr  { background: #ede9fe; color: #5b21b6; }
+    .email-section-header.track-hdr  { background: #e0f2fe; color: #0369a1; }
+    .email-section-header.ref-hdr    { background: #f0fdf4; color: #166534; }
+    .email-section-header .count-badge {
+      margin-left: auto;
+      background: rgba(0,0,0,0.12);
+      border-radius: 10px;
+      padding: 1px 8px;
+      font-size: 11px;
+    }
+    .email-list {
+      border: 1px solid #e5e9f0;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+    }
+    .email-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f2f5;
+      transition: background 0.1s;
+    }
+    .email-item:last-child { border-bottom: none; }
+    .email-item:hover { background: #f8faff; }
+    .email-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 4px;
+    }
+    .email-from   { font-size: 13px; font-weight: 700; color: #1a1f2e; }
+    .email-date   { font-size: 11px; color: #8a95ab; flex-shrink: 0; margin-left: 8px; }
+    .email-subject { font-size: 12px; color: #2d3748; margin-bottom: 4px; }
+    .email-snippet { font-size: 11px; color: #8a95ab; line-height: 1.5; }
+    .email-tag {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      background: #fef3c7;
+      color: #92400e;
+      margin-left: 6px;
+    }
+    .email-result-box { display: none; }
+    .email-fetch-time {
+      font-size: 11px;
+      color: #8a95ab;
+      text-align: right;
+      margin-bottom: 12px;
+    }
+
     /* ── 即將上線 placeholder ── */
     .placeholder {
       text-align: center;
@@ -408,10 +489,9 @@
 
   <div class="sidebar-section">
     <div class="sidebar-section-label">每日任務</div>
-    <div class="sidebar-item" onclick="goTo('email')">
+    <div class="sidebar-item" id="nav-email" onclick="goTo('email')">
       <span class="icon">✉️</span>
       整理 Email
-      <span class="coming-soon">即將上線</span>
     </div>
   </div>
 
@@ -506,14 +586,50 @@
       </div>
     </div>
 
-    <!-- Email 頁（即將上線）-->
+    <!-- Email 頁 -->
     <div class="page" id="page-email">
       <div class="card">
-        <div class="placeholder">
-          <div class="emoji">✉️</div>
-          <h3>Email 整理助理</h3>
-          <p>自動整理今日重要信件、標註已讀。<br>此功能即將整合至任務中心。</p>
+        <div class="card-title">每日 Email 整理</div>
+        <div class="card-desc">
+          按下按鈕後，系統將自動把 ntuhcliao@gmail.com 所有未讀信件標示為已讀，<br>
+          並整理 stanliao@stareksci.com 近兩天的重要信件，依優先順序分類顯示。
         </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="runEmail()">▶ 開始整理 Email</button>
+          <div class="loading" id="email-loading">
+            <div class="spinner"></div>
+            整理中，約需 20-30 秒...
+          </div>
+        </div>
+        <div class="error-msg" id="email-error"></div>
+      </div>
+
+      <!-- 結果區 -->
+      <div class="email-result-box" id="email-result-box">
+        <div class="email-fetch-time" id="email-fetch-time"></div>
+
+        <!-- 統計卡片 -->
+        <div class="email-stat-grid">
+          <div class="email-stat reply">
+            <div class="stat-num" id="stat-reply">0</div>
+            <div class="stat-label">需要回覆</div>
+          </div>
+          <div class="email-stat track">
+            <div class="stat-num" id="stat-track">0</div>
+            <div class="stat-label">待辦追蹤</div>
+          </div>
+          <div class="email-stat marked">
+            <div class="stat-num" id="stat-marked">0</div>
+            <div class="stat-label">已標示已讀</div>
+          </div>
+        </div>
+
+        <!-- 需要回覆 -->
+        <div class="email-section" id="section-reply"></div>
+        <!-- 待辦追蹤 -->
+        <div class="email-section" id="section-track"></div>
+        <!-- 參考資訊 -->
+        <div class="email-section" id="section-ref"></div>
       </div>
     </div>
 
@@ -540,7 +656,7 @@
   // ── 頁面切換 ──
   const pageMap = {
     inventory: { pageId: 'page-inventory', title: '📦 庫存金額計算', navId: 'nav-inventory' },
-    email:     { pageId: 'page-email',     title: '✉️ 整理 Email',    navId: null },
+    email:     { pageId: 'page-email',     title: '✉️ 整理 Email',   navId: 'nav-email' },
     'ar-ap':   { pageId: 'page-ar-ap',     title: '💰 應收應付計算',  navId: null },
   };
 
@@ -701,6 +817,71 @@
     document.getElementById('calc-btn').disabled = true;
     document.getElementById('result-box').style.display = 'none';
     hideError();
+  }
+
+  // ── Email 功能 ──
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbzVtM6JkxxtDWTLGzyftmMwhwH6xNaKjzaTfCSkBUyi4JtQytrWAXAGtDUQJPBJoPLL/exec';
+
+  function runEmail() {
+    document.getElementById('email-loading').style.display = 'flex';
+    document.getElementById('email-result-box').style.display = 'none';
+    document.getElementById('email-error').style.display = 'none';
+
+    fetch(GAS_URL + '?action=runEmail', { redirect: 'follow' })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success) throw new Error('GAS 回傳錯誤');
+        renderEmail(data);
+      })
+      .catch(err => {
+        document.getElementById('email-error').textContent = '⚠️ 執行失敗：' + err.message + '。請確認 GAS 已正確部署且有存取權限。';
+        document.getElementById('email-error').style.display = 'block';
+      })
+      .finally(() => {
+        document.getElementById('email-loading').style.display = 'none';
+      });
+  }
+
+  function renderEmail(data) {
+    document.getElementById('stat-reply').textContent  = data.needReply.length;
+    document.getElementById('stat-track').textContent  = data.toTrack.length;
+    document.getElementById('stat-marked').textContent = data.markedCount;
+    document.getElementById('email-fetch-time').textContent = '資料擷取時間：' + data.fetchedAt + '　共收到 ' + data.total + ' 封';
+
+    renderEmailSection('section-reply', '需要回覆', data.needReply, 'reply-hdr', '🔴');
+    renderEmailSection('section-track', '待辦追蹤', data.toTrack,   'track-hdr', '🟡');
+    renderEmailSection('section-ref',   '參考資訊', data.reference, 'ref-hdr',   '⚪');
+
+    document.getElementById('email-result-box').style.display = 'block';
+    document.getElementById('email-result-box').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function renderEmailSection(containerId, title, items, hdrClass, dot) {
+    const container = document.getElementById(containerId);
+    if (items.length === 0) { container.innerHTML = ''; return; }
+    let html = `<div class="email-section-header ${hdrClass}">
+      ${dot} ${title}
+      <span class="count-badge">${items.length} 封</span>
+    </div>
+    <div class="email-list">`;
+    items.forEach(item => {
+      const tagHtml = item.tag === 'lockincenter'
+        ? '<span class="email-tag">lockincenter</span>' : '';
+      html += `<div class="email-item">
+        <div class="email-item-top">
+          <span class="email-from">${escHtml(item.from)}${tagHtml}</span>
+          <span class="email-date">${escHtml(item.date)}</span>
+        </div>
+        <div class="email-subject">${escHtml(item.subject)}</div>
+        <div class="email-snippet">${escHtml(item.snippet)}</div>
+      </div>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  function escHtml(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
   function showError(msg) {
