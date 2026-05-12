@@ -269,6 +269,19 @@
       display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; font-size: 11px; color: #8a95ab;
     }
     .ar-legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+  
+    /* ── 每週錄音下載 ── */
+    .rec-date-row { display: flex; gap: 16px; margin-bottom: 20px; }
+    .rec-date-group { flex: 1; }
+    .rec-date-group label { display: block; font-size: 11px; font-weight: 700; color: #8a95ab; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+    .btn-rec { background: linear-gradient(135deg, #e53935, #ff6f00); color: #fff; }
+    .btn-rec:hover { opacity: 0.9; }
+    .rec-status { margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-size: 13px; display: none; }
+    .rec-status.success { background: #f0fdf4; color: #059669; border: 1px solid #a7f3d0; display: block; }
+    .rec-status.error   { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; display: block; }
+    .rec-people { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .rec-person { background: #eff4ff; color: #2563eb; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  
   </style>
 </head>
 <body>
@@ -284,16 +297,23 @@
     <div class="sidebar-item" id="nav-email" onclick="goTo('email')">
       <span class="icon">✉️</span> 整理 Email
     </div>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">每月任務</div>
+  
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">每週任務</div>
+        <div class="sidebar-item" id="nav-recording" onclick="goTo('recording')">
+          <span class="icon">📞</span> 每週錄音下載
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">每月任務</div>
     <div class="sidebar-item active" id="nav-inventory" onclick="goTo('inventory')">
       <span class="icon">📦</span> 庫存金額計算
-      <span class="badge">NEW</span>
+      
     </div>
     <div class="sidebar-item" id="nav-ar" onclick="goTo('ar-ap')">
       <span class="icon">💰</span> 應收應付計算
-      <span class="badge" style="background:#059669">NEW</span>
+      
     </div>
   </div>
 </div>
@@ -497,7 +517,49 @@
 
     </div><!-- /page-ar-ap -->
 
-  </div><!-- /content -->
+  
+      <!-- ── 每週錄音下載頁 ── -->
+      <div class="page" id="page-recording">
+        <div class="card">
+          <div class="card-title">每週錄音下載</div>
+          <div class="card-desc">
+            選擇日期區間，自動下載 8 位同仁的 3CX 通話錄音，並整理至 Downloads / Claude 工作資料夾。
+          </div>
+          <div class="rec-date-row">
+            <div class="rec-date-group">
+              <label>開始日期</label>
+              <input type="date" id="rec-start" class="ar-input">
+            </div>
+            <div class="rec-date-group">
+              <label>結束日期</label>
+              <input type="date" id="rec-end" class="ar-input">
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-rec" onclick="runRecordingDownload()">📞 下載本週錄音</button>
+          </div>
+          <div class="rec-status" id="rec-status"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">📋 下載說明</div>
+          <div class="card-desc">
+            按下按鈕後，會自動複製 Claude 指令至剪貼簿並開啟 Claude 對話視窗，貼上即可開始執行。<br><br>
+            Claude 會自動：開啟 3CX 下載錄音 → 建立日期資料夾 → 依「姓名_日期_流水號.wav」整理 → 清除暫存檔。
+          </div>
+          <div class="rec-people">
+            <span class="rec-person">📞 Vega</span>
+            <span class="rec-person">📞 Celeste</span>
+            <span class="rec-person">📞 Camelia</span>
+            <span class="rec-person">📞 Lauren</span>
+            <span class="rec-person">📞 Lawrence</span>
+            <span class="rec-person">📞 Joanne</span>
+            <span class="rec-person">📞 Stacy</span>
+            <span class="rec-person">📞 Atlanta</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
 </div><!-- /main -->
 
 <script>
@@ -673,6 +735,7 @@ function arReadFile(key){
         for(const h of (AR_SHEET_HINTS[key]||[])){ if(wb.SheetNames.includes(h)){sn=h;break;} }
         ok(XLSX.utils.sheet_to_json(wb.Sheets[sn],{raw:true,defval:null}));
       }catch(ex){fail(ex);}
+        recording: { pageId: 'page-recording', title: '📞 每週錄音下載',   navId: 'nav-recording' },
     };
     r.onerror=fail; r.readAsArrayBuffer(arFiles[key]);
   });
@@ -834,6 +897,52 @@ function arReset(){
   document.getElementById('ar-calc-btn').disabled=false;
   document.getElementById('ar-loading').style.display='none';
 }
-</script>
+
+    // ════════════════════════════════════════
+    // 每週錄音下載
+    // ════════════════════════════════════════
+    function runRecordingDownload() {
+      var startVal = document.getElementById('rec-start').value;
+      var endVal   = document.getElementById('rec-end').value;
+      if (!startVal || !endVal) {
+        setRecStatus('error', '❌ 請先選擇開始和結束日期。');
+        return;
+      }
+      var s = new Date(startVal + 'T00:00:00');
+      var e = new Date(endVal   + 'T00:00:00');
+      var startStr = (s.getMonth()+1) + '/' + s.getDate();
+      var endStr   = (e.getMonth()+1) + '/' + e.getDate();
+      var prompt = '幫我用Skill 下載 ' + startStr + '-' + endStr + ' 的錄音';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(prompt).then(function() {
+          setRecStatus('success', '✅ 已複製指令到剪貼簿！正在開啟 Claude…<br><small>指令：<strong>' + prompt + '</strong></small>');
+        }).catch(function() {
+          setRecStatus('success', '📋 請複製此指令貼到 Claude：<br><strong>' + prompt + '</strong>');
+        });
+      } else {
+        setRecStatus('success', '📋 請複製此指令貼到 Claude：<br><strong>' + prompt + '</strong>');
+      }
+      setTimeout(function() { window.open('https://claude.ai', '_blank'); }, 600);
+    }
+    function setRecStatus(type, html) {
+      var el = document.getElementById('rec-status');
+      el.className = 'rec-status ' + type; el.innerHTML = html;
+    }
+    // 預設本週一～週五
+    (function initRecDates() {
+      var today = new Date();
+      var day = today.getDay();
+      var mon = new Date(today);
+      mon.setDate(today.getDate() - (day === 0 ? 6 : day - 1));
+      var fri = new Date(mon);
+      fri.setDate(mon.getDate() + 4);
+      function fmt(d) {
+        return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      }
+      document.getElementById('rec-start').value = fmt(mon);
+      document.getElementById('rec-end').value   = fmt(fri);
+    })();
+
+  </script>
 </body>
 </html>
