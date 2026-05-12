@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stan 的任務中心</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── 側邊欄 ── */
+    .sidebar {
+      width: 240px;
+      background: #1a1f2e;
+      color: #cdd5e0;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid #2d3448;
+    }
+
+    .sidebar-header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-header p {
+      font-size: 11px;
+      color: #6b7897;
+      margin-top: 4px;
+    }
+
+    .sidebar-section {
+      padding: 16px 12px 8px;
+    }
+
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #4a5568;
+      padding: 0 8px;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #8a95ab;
+      transition: all 0.15s;
+      margin-bottom: 2px;
+    }
+
+    .sidebar-item:hover {
+      background: #252b3d;
+      color: #cdd5e0;
+    }
+
+    .sidebar-item.active {
+      background: #2563eb20;
+      color: #60a5fa;
+      font-weight: 600;
+    }
+
+    .sidebar-item .icon {
+      font-size: 15px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-item .badge {
+      margin-left: auto;
+      background: #2563eb;
+      color: #fff;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .sidebar-item .coming-soon {
+      margin-left: auto;
+      font-size: 10px;
+      color: #4a5568;
+      font-style: italic;
+    }
+
+    /* ── 主內容 ── */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #e5e9f0;
+      padding: 0 28px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .topbar-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a1f2e;
+    }
+
+    .topbar-date {
+      font-size: 12px;
+      color: #8a95ab;
+    }
+
+    .content {
+      padding: 28px;
+      flex: 1;
+    }
+
+    /* ── 頁面切換 ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── 卡片 ── */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1f2e;
+      margin-bottom: 6px;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: #8a95ab;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    /* ── 上傳區 ── */
+    .upload-area {
+      border: 2px dashed #c7d2e8;
+      border-radius: 10px;
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #f8faff;
+      position: relative;
+    }
+
+    .upload-area:hover, .upload-area.dragover {
+      border-color: #2563eb;
+      background: #eff4ff;
+    }
+
+    .upload-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-icon { font-size: 36px; margin-bottom: 10px; }
+
+    .upload-area p {
+      font-size: 13px;
+      color: #4a5568;
+    }
+
+    .upload-area .hint {
+      font-size: 11px;
+      color: #a0aec0;
+      margin-top: 6px;
+    }
+
+    .file-name {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #2563eb;
+      font-weight: 600;
+      display: none;
+    }
+
+    /* ── 按鈕 ── */
+    .btn {
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-primary:disabled { background: #93afd8; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: #f0f2f5;
+      color: #4a5568;
+    }
+
+    .btn-secondary:hover { background: #e2e8f0; }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      align-items: center;
+    }
+
+    /* ── 結果 ── */
+    .result-box {
+      display: none;
+      margin-top: 24px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .result-card {
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .result-card.buyout {
+      background: linear-gradient(135deg, #1e40af, #2563eb);
+      color: #fff;
+    }
+
+    .result-card.temp {
+      background: linear-gradient(135deg, #065f46, #059669);
+      color: #fff;
+    }
+
+    .result-card .label {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .result-card .amount {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .result-card .unit {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    /* ── 詳細表格 ── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid #e5e9f0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    thead th {
+      background: #f8faff;
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 700;
+      color: #4a5568;
+      border-bottom: 1px solid #e5e9f0;
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #f0f2f5;
+      color: #2d3748;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #f8faff; }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .tag-adjusted { background: #fef3c7; color: #92400e; }
+    .tag-normal { background: #f0f4ff; color: #3730a3; }
+
+    /* ── Loading ── */
+    .loading {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #2563eb;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #dbeafe;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── 即將上線 placeholder ── */
+    .placeholder {
+      text-align: center;
+      padding: 60px 20px;
+      color: #a0aec0;
+    }
+
+    .placeholder .emoji { font-size: 48px; margin-bottom: 16px; }
+    .placeholder h3 { font-size: 16px; color: #4a5568; margin-bottom: 8px; }
+    .placeholder p { font-size: 13px; line-height: 1.6; }
+
+    /* ── 錯誤訊息 ── */
+    .error-msg {
+      display: none;
+      background: #fff5f5;
+      border: 1px solid #fed7d7;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: #c53030;
+    }
+
+    /* ── 摘要列 ── */
+    .summary-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #4a5568;
+    }
+
+    .summary-row span {
+      background: #f0f4ff;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 側邊欄 -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1>📋 任務中心</h1>
+    <p>Stan 的自動化工作台</p>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">每日任務</div>
+    <div class="sidebar-item" onclick="goTo('email')">
+      <span class="icon">✉️</span>
+      整理 Email
+      <span class="coming-soon">即將上線</span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">每月任務</div>
+    <div class="sidebar-item active" id="nav-inventory" onclick="goTo('inventory')">
+      <span class="icon">📦</span>
+      庫存金額計算
+      <span class="badge">NEW</span>
+    </div>
+    <div class="sidebar-item" onclick="goTo('ar-ap')">
+      <span class="icon">💰</span>
+      應收應付計算
+      <span class="coming-soon">即將上線</span>
+    </div>
+  </div>
+</div>
+
+<!-- 主內容 -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="page-title">📦 庫存金額計算</div>
+    <div class="topbar-date" id="today-date"></div>
+  </div>
+
+  <div class="content">
+
+    <!-- 庫存計算頁 -->
+    <div class="page active" id="page-inventory">
+      <div class="card">
+        <div class="card-title">上傳庫存報表</div>
+        <div class="card-desc">
+          上傳從公司系統匯出的 Excel 報表（需包含「現有庫存報表」工作表）。<br>
+          系統將自動依廠商序號調整價格，計算買斷與暫時庫存金額。
+        </div>
+
+        <div class="upload-area" id="upload-area">
+          <input type="file" id="file-input" accept=".xlsx,.xls,.csv" />
+          <div class="upload-icon">📂</div>
+          <p>點擊或拖曳報表檔案至此</p>
+          <p class="hint">支援 .xlsx、.xls、.csv</p>
+        </div>
+        <div class="file-name" id="file-name"></div>
+        <div class="error-msg" id="error-msg"></div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" id="calc-btn" onclick="calculate()" disabled>開始計算</button>
+          <button class="btn btn-secondary" onclick="reset()">重置</button>
+          <div class="loading" id="loading">
+            <div class="spinner"></div>
+            計算中...
+          </div>
+        </div>
+      </div>
+
+      <!-- 結果區 -->
+      <div class="result-box" id="result-box">
+        <div class="result-grid">
+          <div class="result-card buyout">
+            <div class="label">買斷庫存總金額</div>
+            <div class="amount" id="total-buyout">—</div>
+            <div class="unit">新台幣 (TWD)</div>
+          </div>
+          <div class="result-card temp">
+            <div class="label">暫時庫存總金額</div>
+            <div class="amount" id="total-temp">—</div>
+            <div class="unit">新台幣 (TWD)</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">明細資料</div>
+          <div class="summary-row" id="summary-row"></div>
+          <div class="table-wrap">
+            <table id="detail-table">
+              <thead>
+                <tr>
+                  <th>採購廠商序號</th>
+                  <th>平均進貨價</th>
+                  <th>調整後價格</th>
+                  <th>調整說明</th>
+                  <th>買斷庫存</th>
+                  <th>買斷庫存金額</th>
+                  <th>暫時庫存</th>
+                  <th>暫時庫存金額</th>
+                </tr>
+              </thead>
+              <tbody id="detail-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Email 頁（即將上線）-->
+    <div class="page" id="page-email">
+      <div class="card">
+        <div class="placeholder">
+          <div class="emoji">✉️</div>
+          <h3>Email 整理助理</h3>
+          <p>自動整理今日重要信件、標註已讀。<br>此功能即將整合至任務中心。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 應收應付頁（即將上線）-->
+    <div class="page" id="page-ar-ap">
+      <div class="card">
+        <div class="placeholder">
+          <div class="emoji">💰</div>
+          <h3>應收應付計算</h3>
+          <p>上傳報表，自動計算應收帳款與應付帳款金額。<br>此功能即將整合至任務中心。</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+  // ── 今日日期 ──
+  const dateEl = document.getElementById('today-date');
+  const now = new Date();
+  dateEl.textContent = now.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+
+  // ── 頁面切換 ──
+  const pageMap = {
+    inventory: { pageId: 'page-inventory', title: '📦 庫存金額計算', navId: 'nav-inventory' },
+    email:     { pageId: 'page-email',     title: '✉️ 整理 Email',    navId: null },
+    'ar-ap':   { pageId: 'page-ar-ap',     title: '💰 應收應付計算',  navId: null },
+  };
+
+  function goTo(key) {
+    const cfg = pageMap[key];
+    if (!cfg) return;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    document.getElementById(cfg.pageId).classList.add('active');
+    document.getElementById('page-title').textContent = cfg.title;
+    if (cfg.navId) document.getElementById(cfg.navId).classList.add('active');
+  }
+
+  // ── 上傳區拖曳效果 ──
+  const uploadArea = document.getElementById('upload-area');
+  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+
+  document.getElementById('file-input').addEventListener('change', e => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+  });
+
+  let workbook = null;
+
+  function handleFile(file) {
+    const allowed = ['.xlsx', '.xls', '.csv'];
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    if (!allowed.includes(ext)) {
+      showError('請上傳 .xlsx、.xls 或 .csv 格式的檔案。');
+      return;
+    }
+    hideError();
+    document.getElementById('file-name').style.display = 'block';
+    document.getElementById('file-name').textContent = '✅ 已選擇：' + file.name;
+    document.getElementById('calc-btn').disabled = false;
+    document.getElementById('result-box').style.display = 'none';
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        workbook = XLSX.read(data, { type: 'array' });
+      } catch(err) {
+        showError('讀取檔案時發生錯誤：' + err.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // ── 計算邏輯 ──
+  function calculate() {
+    hideError();
+    if (!workbook) { showError('請先上傳檔案。'); return; }
+
+    document.getElementById('loading').style.display = 'flex';
+    document.getElementById('calc-btn').disabled = true;
+
+    setTimeout(() => {
+      try {
+        // 找工作表：優先找「現有庫存報表」，否則用第一張
+        let sheetName = workbook.SheetNames.find(n => n.includes('現有庫存報表')) || workbook.SheetNames[0];
+        const ws = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+
+        if (rows.length === 0) { showError('工作表內沒有資料，請確認檔案格式。'); return; }
+
+        let totalBuyout = 0, totalTemp = 0;
+        const details = [];
+
+        rows.forEach(row => {
+          const vendor   = String(row['採購廠商序號'] || '').trim();
+          const rawPrice = parseFloat(row['平均進貨價']) || 0;
+          const buyQty   = parseFloat(row['買斷庫存']) || 0;
+          const tempQty  = parseFloat(row['暫時庫存(待出貨庫存)']) || 0;
+
+          // 1. 調整後價格
+          let adjPrice, adjLabel;
+          if (vendor === 'VD0001152') {
+            adjPrice = rawPrice * 0.82;
+            adjLabel = '×0.82';
+          } else if (vendor === 'VD0000096') {
+            adjPrice = rawPrice * 0.97;
+            adjLabel = '×0.97';
+          } else {
+            adjPrice = rawPrice;
+            adjLabel = '—';
+          }
+
+          // 2. 買斷庫存金額
+          const buyAmount = buyQty * adjPrice;
+
+          // 3. 暫時庫存金額
+          const tempAmount = tempQty > 0 ? adjPrice * tempQty : 0;
+
+          totalBuyout += buyAmount;
+          totalTemp   += tempAmount;
+
+          details.push({ vendor, rawPrice, adjPrice, adjLabel, buyQty, buyAmount, tempQty, tempAmount });
+        });
+
+        renderResults(totalBuyout, totalTemp, details, rows.length);
+
+      } catch(err) {
+        showError('計算時發生錯誤：' + err.message);
+      } finally {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('calc-btn').disabled = false;
+      }
+    }, 100);
+  }
+
+  function fmt(n) {
+    return n.toLocaleString('zh-TW', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function renderResults(totalBuyout, totalTemp, details, rowCount) {
+    document.getElementById('total-buyout').textContent = fmt(totalBuyout);
+    document.getElementById('total-temp').textContent   = fmt(totalTemp);
+
+    // 摘要
+    const adjusted = details.filter(d => d.adjLabel !== '—').length;
+    document.getElementById('summary-row').innerHTML =
+      `<span>共 ${rowCount} 筆資料</span><span>價格調整：${adjusted} 筆</span>`;
+
+    // 明細
+    const tbody = document.getElementById('detail-body');
+    tbody.innerHTML = '';
+    details.forEach(d => {
+      const tr = document.createElement('tr');
+      const isAdj = d.adjLabel !== '—';
+      tr.innerHTML = `
+        <td>${d.vendor || '（未填）'}</td>
+        <td>${fmt(d.rawPrice)}</td>
+        <td>${fmt(d.adjPrice)}</td>
+        <td><span class="tag ${isAdj ? 'tag-adjusted' : 'tag-normal'}">${isAdj ? d.adjLabel : '未調整'}</span></td>
+        <td>${d.buyQty.toLocaleString()}</td>
+        <td>${fmt(d.buyAmount)}</td>
+        <td>${d.tempQty.toLocaleString()}</td>
+        <td>${fmt(d.tempAmount)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('result-box').style.display = 'block';
+    document.getElementById('result-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function reset() {
+    workbook = null;
+    document.getElementById('file-input').value = '';
+    document.getElementById('file-name').style.display = 'none';
+    document.getElementById('calc-btn').disabled = true;
+    document.getElementById('result-box').style.display = 'none';
+    hideError();
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = '⚠️ ' + msg;
+    el.style.display = 'block';
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('calc-btn').disabled = false;
+  }
+
+  function hideError() {
+    document.getElementById('error-msg').style.display = 'none';
+  }
+</script>
+</body>
+</html>
