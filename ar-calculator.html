@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💰 應收帳款預估計算 | Stan 的任務中心</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --card2: #21262d;
+            --accent: #7c6fcd;
+            --accent2: #3fb950;
+            --text: #e6edf3;
+            --subtext: #8b949e;
+            --border: #30363d;
+            --success: #3fb950;
+            --warning: #d29922;
+            --error: #f85149;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans TC', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 28px 16px 60px;
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; }
+
+        /* Header */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--subtext);
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-bottom: 28px;
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .back-link:hover { color: var(--text); border-color: var(--subtext); }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #7c6fcd 0%, #3fb950 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .page-header p {
+            color: var(--subtext);
+            font-size: 0.925rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+        }
+
+        /* Config */
+        .config-grid {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        @media (max-width: 640px) { .config-grid { grid-template-columns: 1fr; } }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-label {
+            font-size: 0.8rem;
+            color: var(--subtext);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .form-input, .form-textarea {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+        .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
+        .form-textarea { resize: vertical; min-height: 72px; }
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--subtext);
+            line-height: 1.5;
+        }
+
+        /* File Upload Grid */
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+        @media (max-width: 900px) { .files-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 560px) { .files-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .file-area {
+            background: var(--card2);
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 18px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .file-area:hover { border-color: var(--accent); }
+        .file-area.dragover { border-color: var(--accent); background: #1c1f35; }
+        .file-area.ready { border-color: var(--success); border-style: solid; }
+
+        .file-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+        .file-part-tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.05em;
+        }
+        .file-part-tag.p1 { background: #5b7dcd; }
+        .file-part-tag.p2 { background: #3fb950; }
+        .file-part-tag.p3 { background: #d29922; }
+        .file-part-tag.p41 { background: #f85149; }
+        .file-part-tag.p42 { background: #db61a2; }
+
+        .file-area-icon { font-size: 1.6rem; }
+        .file-area-desc {
+            font-size: 0.75rem;
+            color: var(--subtext);
+            line-height: 1.4;
+        }
+        .file-area-status { font-size: 1.1rem; }
+        .file-area-name {
+            font-size: 0.7rem;
+            color: var(--success);
+            word-break: break-all;
+            line-height: 1.3;
+        }
+
+        /* Buttons */
+        .action-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 11px 28px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #7c6fcd, #3fb950);
+            color: white;
+            box-shadow: 0 2px 12px rgba(124,111,205,0.25);
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(124,111,205,0.4); }
+        .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-secondary {
+            background: var(--card2);
+            color: var(--subtext);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { color: var(--text); border-color: var(--subtext); }
+
+        /* Status */
+        .status-bar {
+            padding: 11px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            margin-top: 14px;
+            display: none;
+            text-align: center;
+        }
+        .status-bar.show { display: block; }
+        .status-bar.info { background: rgba(124,111,205,0.12); color: #a391e8; border: 1px solid rgba(124,111,205,0.25); }
+        .status-bar.success { background: rgba(63,185,80,0.12); color: var(--success); border: 1px solid rgba(63,185,80,0.25); }
+        .status-bar.error { background: rgba(248,81,73,0.12); color: var(--error); border: 1px solid rgba(248,81,73,0.25); }
+
+        /* Summary Cards */
+        .summary-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .summary-card {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 20px;
+            text-align: center;
+        }
+        .summary-card .s-label { font-size: 0.75rem; color: var(--subtext); margin-bottom: 6px; }
+        .summary-card .s-value { font-size: 1.25rem; font-weight: 700; color: var(--accent); }
+        .summary-card .s-sub { font-size: 0.75rem; color: var(--subtext); margin-top: 3px; }
+
+        /* Results Table */
+        .table-wrapper { overflow-x: auto; }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+        .results-table th {
+            background: var(--card2);
+            padding: 9px 16px;
+            text-align: center;
+            color: var(--subtext);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.78rem;
+        }
+        .results-table th:first-child {
+            text-align: left;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+            background: var(--card2);
+            min-width: 170px;
+        }
+        .results-table td {
+            padding: 9px 16px;
+            border-bottom: 1px solid var(--border);
+            text-align: right;
+        }
+        .results-table td:first-child {
+            text-align: left;
+            color: var(--subtext);
+            font-size: 0.8rem;
+            position: sticky;
+            left: 0;
+            background: var(--card);
+        }
+        .results-table tr:hover td { background: var(--card2); }
+        .results-table tr:hover td:first-child { background: var(--card2); }
+
+        .results-table tr.row-total td {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 0.88rem;
+            background: rgba(124,111,205,0.08);
+            border-top: 2px solid rgba(124,111,205,0.4);
+        }
+        .results-table tr.row-total td:first-child { background: rgba(124,111,205,0.08); color: var(--text); }
+        .results-table tr.row-total:hover td { background: rgba(124,111,205,0.14); }
+        .results-table tr.row-total:hover td:first-child { background: rgba(124,111,205,0.14); }
+
+        .val-zero { color: var(--border) !important; }
+        .val-pos { color: var(--text); }
+
+        .hidden { display: none !important; }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .legend-item {
+            font-size: 0.75rem;
+            color: var(--subtext);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Divider */
+        .divider { height: 1px; background: var(--border); margin: 20px 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <a href="https://stanhcliao.github.io/task-center/" class="back-link">← 回任務中心</a>
+
+    <div class="page-header">
+        <h1>💰 應收帳款預估計算</h1>
+        <p>上傳五份月報表，自動計算未來各月份應收帳款預估金額</p>
+    </div>
+
+    <!-- Step 1: 設定 -->
+    <div class="card">
+        <div class="card-title">⚙️ Step 1 — 計算設定</div>
+        <div class="config-grid">
+            <div class="form-group">
+                <label class="form-label">結算日 (Cutoff Date)</label>
+                <input type="date" id="cutoffDate" class="form-input" value="2025-12-31">
+                <p class="form-hint">預估表將從結算日的次月開始計算</p>
+            </div>
+            <div class="form-group">
+                <label class="form-label">排除訂單序號（每月不同，逗號分隔）</label>
+                <textarea id="excludeIds" class="form-textarea"
+                    placeholder="例：81359, 99234, 94366">81359, 99234, 94366, 103938, 112111, 112112, 114967, 125387, 125388</textarea>
+                <p class="form-hint">這些訂單序號對應的發票/訂單將完全排除在計算之外</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: 上傳檔案 -->
+    <div class="card">
+        <div class="card-title">📂 Step 2 — 上傳五份報表</div>
+        <div class="files-grid">
+
+            <div class="file-area" id="area-part1"
+                 ondragover="ev('part1',true,event)" ondragleave="ev('part1',false,event)"
+                 ondrop="drop('part1',event)">
+                <input type="file" accept=".xlsx,.xls,.csv" onchange="pick('part1',event)">
+                <span class="file-part-tag p1">Part 1</span>
+                <div class="file-area-icon">📄</div>
+                <div class="file-area-desc">訂單日期前<br>未付款之發票<br><em style="font-size:0.65rem;color:#5b7dcd">工作表：Invoice</em></div>
+                <div class="file-area-status" id="stat-part1"></div>
+                <div class="file-area-name" id="fname-part1"></div>
+            </div>
+
+            <div class="file-area" id="area-part2"
+                 ondragover="ev('part2',true,event)" ondragleave="ev('part2',false,event)"
+                 ondrop="drop('part2',event)">
+                <input type="file" accept=".xlsx,.xls,.csv" onchange="pick('part2',event)">
+                <span class="file-part-tag p2">Part 2</span>
+                <div class="file-area-icon">📄</div>
+                <div class="file-area-desc">結算日前未付<br>已於次月付款<br><em style="font-size:0.65rem;color:#3fb950">工作表：Invoice</em></div>
+                <div class="file-area-status" id="stat-part2"></div>
+                <div class="file-area-name" id="fname-part2"></div>
+            </div>
+
+            <div class="file-area" id="area-part3"
+                 ondragover="ev('part3',true,event)" ondragleave="ev('part3',false,event)"
+                 ondrop="drop('part3',event)">
+                <input type="file" accept=".xlsx,.xls,.csv" onchange="pick('part3',event)">
+                <span class="file-part-tag p3">Part 3</span>
+                <div class="file-area-icon">📄</div>
+                <div class="file-area-desc">結算日<br>已收支票之發票<br><em style="font-size:0.65rem;color:#d29922">工作表：Invoice</em></div>
+                <div class="file-area-status" id="stat-part3"></div>
+                <div class="file-area-name" id="fname-part3"></div>
+            </div>
+
+            <div class="file-area" id="area-part41"
+                 ondragover="ev('part41',true,event)" ondragleave="ev('part41',false,event)"
+                 ondrop="drop('part41',event)">
+                <input type="file" accept=".xlsx,.xls,.csv" onchange="pick('part41',event)">
+                <span class="file-part-tag p41">Part 4-1</span>
+                <div class="file-area-icon">📄</div>
+                <div class="file-area-desc">未完成發票開立<br>訂單明細 (一)<br><em style="font-size:0.65rem;color:#f85149">工作表：訂單明細</em></div>
+                <div class="file-area-status" id="stat-part41"></div>
+                <div class="file-area-name" id="fname-part41"></div>
+            </div>
+
+            <div class="file-area" id="area-part42"
+                 ondragover="ev('part42',true,event)" ondragleave="ev('part42',false,event)"
+                 ondrop="drop('part42',event)">
+                <input type="file" accept=".xlsx,.xls,.csv" onchange="pick('part42',event)">
+                <span class="file-part-tag p42">Part 4-2</span>
+                <div class="file-area-icon">📄</div>
+                <div class="file-area-desc">未完成發票開立<br>訂單明細 (二)<br><em style="font-size:0.65rem;color:#db61a2">工作表：訂單明細</em></div>
+                <div class="file-area-status" id="stat-part42"></div>
+                <div class="file-area-name" id="fname-part42"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Step 3: 執行 -->
+    <div class="card">
+        <div class="card-title">🚀 Step 3 — 執行計算</div>
+        <div class="action-row">
+            <button class="btn btn-primary" id="calcBtn" onclick="runCalculation()">🚀 開始計算</button>
+            <button class="btn btn-secondary" onclick="resetAll()">🔄 全部重置</button>
+        </div>
+        <div id="statusBar" class="status-bar"></div>
+    </div>
+
+    <!-- Results -->
+    <div class="card hidden" id="resultsCard">
+        <div class="card-title">📊 預估收款結果</div>
+
+        <div class="summary-row" id="summaryRow"></div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#5b7dcd"></div>Part 1 發票未付</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#3fb950"></div>Part 2 次月已付</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#d29922"></div>Part 3 已收支票</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#db61a2"></div>Part 4 未開立發票</div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="results-table" id="resultsTable"></table>
+        </div>
+
+        <div class="divider"></div>
+        <div style="font-size:0.75rem;color:var(--subtext);text-align:center;">
+            所有金額已四捨五入至整數（新台幣 TWD）　　金額為零的月份不顯示
+        </div>
+    </div>
+
+</div>
+
+<script>
+'use strict';
+
+// ── State ──────────────────────────────────────────────
+const files = { part1: null, part2: null, part3: null, part41: null, part42: null };
+
+// ── Period helpers ─────────────────────────────────────
+const ym = (y, m) => `${y}-${String(m).padStart(2,'0')}`;
+
+function addMo(ymStr, n) {
+    let [y, m] = ymStr.split('-').map(Number);
+    m += n;
+    while (m > 12) { m -= 12; y++; }
+    while (m < 1)  { m += 12; y--; }
+    return ym(y, m);
+}
+
+function makePeriods(startYM, count) {
+    return Array.from({ length: count }, (_, i) => addMo(startYM, i));
+}
+
+function dateToYM(d) {
+    if (!d || isNaN(d)) return null;
+    return ym(d.getFullYear(), d.getMonth() + 1);
+}
+
+// Parse a cell value that might be: Date object, number (Excel serial), or string
+function parseDate(val) {
+    if (!val && val !== 0) return null;
+    if (val instanceof Date) return isNaN(val) ? null : val;
+    if (typeof val === 'number') {
+        // Excel date serial: days since 1900-01-00 (with leap-year bug)
+        const d = new Date(Math.round((val - 25569) * 86400 * 1000));
+        return isNaN(d) ? null : d;
+    }
+    if (typeof val === 'string') {
+        const s = val.trim();
+        if (!s) return null;
+        // Try ISO / common formats
+        const d = new Date(s);
+        return isNaN(d) ? null : d;
+    }
+    return null;
+}
+
+function parseNum(val) {
+    if (typeof val === 'number') return isNaN(val) ? 0 : val;
+    if (!val) return 0;
+    const n = parseFloat(String(val).replace(/,/g, ''));
+    return isNaN(n) ? 0 : n;
+}
+
+// ── File upload UI ─────────────────────────────────────
+function ev(k, on, e) {
+    e.preventDefault();
+    document.getElementById(`area-${k}`).classList.toggle('dragover', on);
+}
+function drop(k, e) {
+    e.preventDefault();
+    ev(k, false, e);
+    const f = e.dataTransfer.files[0];
+    if (f) store(k, f);
+}
+function pick(k, e) {
+    const f = e.target.files[0];
+    if (f) store(k, f);
+}
+function store(k, f) {
+    files[k] = f;
+    document.getElementById(`stat-${k}`).textContent = '✅';
+    document.getElementById(`fname-${k}`).textContent = f.name;
+    document.getElementById(`area-${k}`).classList.add('ready');
+}
+
+// ── Excel / CSV parser ─────────────────────────────────
+// Preferred sheet names per part
+const SHEET_HINTS = {
+    part1: ['Invoice','invoice','工作表1'],
+    part2: ['Invoice','invoice','工作表1'],
+    part3: ['Invoice','invoice','工作表1'],
+    part41: ['訂單明細','Sheet1','工作表1'],
+    part42: ['訂單明細','Sheet1','工作表1'],
+};
+
+async function readFile(key) {
+    const f = files[key];
+    return new Promise((ok, fail) => {
+        const r = new FileReader();
+        r.onload = e => {
+            try {
+                const wb = XLSX.read(new Uint8Array(e.target.result), {
+                    type: 'array', cellDates: true, cellNF: false
+                });
+                // Pick the right sheet
+                let sheetName = wb.SheetNames[0];
+                const hints = SHEET_HINTS[key] || [];
+                for (const h of hints) {
+                    if (wb.SheetNames.includes(h)) { sheetName = h; break; }
+                }
+                const ws = wb.Sheets[sheetName];
+                // raw:true preserves Date objects and numeric values
+                const rows = XLSX.utils.sheet_to_json(ws, { raw: true, defval: null });
+                ok(rows);
+            } catch(ex) { fail(ex); }
+        };
+        r.onerror = fail;
+        r.readAsArrayBuffer(f);
+    });
+}
+
+// ── Exclusion check ────────────────────────────────────
+function excluded(val, excSet) {
+    if (!val && val !== 0) return false;
+    return String(val).split(',').map(s => s.trim()).some(s => excSet.has(s));
+}
+
+// Flexible column finder (handles trailing spaces, etc.)
+function col(row, ...names) {
+    for (const n of names) {
+        if (row[n] !== undefined && row[n] !== null) return row[n];
+        // Try trimmed key
+        const key = Object.keys(row).find(k => k.trim() === n.trim());
+        if (key !== undefined) return row[key];
+    }
+    return null;
+}
+
+// ── Main calculation ───────────────────────────────────
+async function runCalculation() {
+    const btn = document.getElementById('calcBtn');
+    btn.disabled = true;
+
+    // Validate
+    const cutInput = document.getElementById('cutoffDate').value;
+    if (!cutInput) { showStatus('error','❌ 請輸入結算日'); btn.disabled=false; return; }
+
+    // cutoff date (end of that day)
+    const cutoff = new Date(cutInput + 'T23:59:59.999');
+
+    // Start forecast: next month after cutoff
+    const cutYM = ym(cutoff.getFullYear(), cutoff.getMonth() + 1);
+    const startYM = addMo(cutYM, 1);
+
+    // Exclude set
+    const excSet = new Set(
+        document.getElementById('excludeIds').value
+            .split(/[,\n\r]/).map(s => s.trim()).filter(Boolean)
+    );
+
+    // Check files
+    const miss = Object.entries(files).filter(([,v])=>!v).map(([k])=>k);
+    if (miss.length) {
+        showStatus('error', `❌ 缺少檔案：${miss.join('、')}`);
+        btn.disabled = false; return;
+    }
+
+    showStatus('info', '⏳ 正在解析檔案並計算中，請稍候…');
+
+    try {
+        // Generate enough periods: startYM + 17 months (covers Part1 spread which starts +5 and goes 12 months)
+        const PERIOD_COUNT = 20;
+        const periods = makePeriods(startYM, PERIOD_COUNT);
+        const df = {};
+        for (const p of periods) df[p] = { P1: 0, P2: 0, P3: 0, P4: 0 };
+
+        // Helper: add value to a period (ignore if out of range)
+        const addTo = (part, ymStr, val) => {
+            if (df[ymStr]) df[ymStr][part] += val;
+        };
+
+        // ── PART 1 ────────────────────────────────────
+        const d1 = await readFile('part1');
+        let p1Past = 0;
+
+        for (const row of d1) {
+            const orderCol = col(row, '對應訂單序號');
+            if (excluded(orderCol, excSet)) continue;
+
+            const invDate = parseDate(col(row, '發票日期'));
+            if (!invDate || invDate < new Date('2022-01-01')) continue;
+
+            const amt = parseNum(col(row, '發票金額'));
+            if (!amt) continue;
+
+            const due = parseDate(col(row, '最晚付款時間'));
+
+            if (due && due > cutoff) {
+                addTo('P1', dateToYM(due), amt);
+            } else {
+                p1Past += amt;
+            }
+        }
+
+        // Past: spread over 12 months starting from 6th forecast month (start + 5)
+        const p1Monthly = p1Past / 12;
+        const p1Start = addMo(startYM, 5);
+        for (let i = 0; i < 12; i++) addTo('P1', addMo(p1Start, i), p1Monthly);
+
+        // ── PART 2 ────────────────────────────────────
+        const d2 = await readFile('part2');
+        let p2Total = 0;
+
+        for (const row of d2) {
+            const orderCol = col(row, '對應訂單序號');
+            if (excluded(orderCol, excSet)) continue;
+            p2Total += parseNum(col(row, '發票金額'));
+        }
+        addTo('P2', startYM, p2Total);
+
+        // ── PART 3 ────────────────────────────────────
+        const d3 = await readFile('part3');
+        let p3Past = 0;
+
+        for (const row of d3) {
+            const orderCol = col(row, '對應訂單序號');
+            if (excluded(orderCol, excSet)) continue;
+
+            const amt = parseNum(col(row, '發票金額'));
+            if (!amt) continue;
+            const due = parseDate(col(row, '最晚付款時間'));
+
+            if (due && due > cutoff) {
+                addTo('P3', dateToYM(due), amt);
+            } else {
+                p3Past += amt;
+            }
+        }
+
+        // Past: assign to 4th forecast month (start + 3)
+        addTo('P3', addMo(startYM, 3), p3Past);
+
+        // ── PART 4 ────────────────────────────────────
+        const d41 = await readFile('part41');
+        const d42 = await readFile('part42');
+        let p4Uninvoiced = 0;
+
+        for (const row of [...d41, ...d42]) {
+            const id = String(col(row, 'ID') ?? '').trim();
+            if (excSet.has(id)) continue;
+
+            const invAmt       = parseNum(col(row, '發票金額'));
+            const alreadyInv   = parseNum(col(row, '已開立發票金額'));
+            p4Uninvoiced += (invAmt - alreadyInv);
+        }
+
+        const p4Monthly = p4Uninvoiced / 12;
+        for (let i = 0; i < 12; i++) addTo('P4', addMo(startYM, i), p4Monthly);
+
+        // ── Compile display rows ───────────────────────
+        const displayRows = [];
+        for (const p of periods) {
+            const r = df[p];
+            const total = r.P1 + r.P2 + r.P3 + r.P4;
+            if (Math.abs(total) > 0.01) {
+                displayRows.push({ period: p, P1: r.P1, P2: r.P2, P3: r.P3, P4: r.P4, Total: total });
+            }
+        }
+
+        renderResults(displayRows, startYM, {
+            p1Past, p1Monthly, p2Total,
+            p3Past, p4Uninvoiced, p4Monthly,
+            excSet
+        });
+
+        showStatus('success', `✅ 計算完成！共 ${displayRows.length} 個月份有資料`);
+        document.getElementById('resultsCard').classList.remove('hidden');
+        document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } catch(ex) {
+        console.error(ex);
+        showStatus('error', `❌ 計算錯誤：${ex.message}（請確認欄位名稱是否正確）`);
+    }
+
+    btn.disabled = false;
+}
+
+// ── Render results ─────────────────────────────────────
+function renderResults(rows, startYM, meta) {
+    // Summary cards
+    const grandTotal = rows.reduce((s,r) => s + r.Total, 0);
+    const maxRow = rows.reduce((a,b) => b.Total > a.Total ? b : a, rows[0]);
+    const p1Total = rows.reduce((s,r) => s + r.P1, 0);
+    const p4Total = rows.reduce((s,r) => s + r.P4, 0);
+
+    document.getElementById('summaryRow').innerHTML = `
+        <div class="summary-card">
+            <div class="s-label">12+ 個月預估總收款</div>
+            <div class="s-value">${fmt(grandTotal)}</div>
+            <div class="s-sub">新台幣 (TWD)</div>
+        </div>
+        <div class="summary-card">
+            <div class="s-label">最高收款月份</div>
+            <div class="s-value">${maxRow?.period ?? '-'}</div>
+            <div class="s-sub">${maxRow ? fmt(maxRow.Total) : '-'}</div>
+        </div>
+        <div class="summary-card">
+            <div class="s-label">Part 1 逾期攤提 (月均)</div>
+            <div class="s-value">${fmt(meta.p1Monthly)}</div>
+            <div class="s-sub">歷史未付 ${fmt(meta.p1Past)}</div>
+        </div>
+        <div class="summary-card">
+            <div class="s-label">Part 2 次月入帳</div>
+            <div class="s-value">${fmt(meta.p2Total)}</div>
+            <div class="s-sub">認列於 ${startYM}</div>
+        </div>
+        <div class="summary-card">
+            <div class="s-label">Part 4 未開立 (月均)</div>
+            <div class="s-value">${fmt(meta.p4Monthly)}</div>
+            <div class="s-sub">未開立合計 ${fmt(meta.p4Uninvoiced)}</div>
+        </div>
+    `;
+
+    // Table — transposed: rows=parts, cols=months
+    const parts = [
+        { key: 'P1', label: 'Part 1　發票未付', cls: '' },
+        { key: 'P2', label: 'Part 2　次月已付', cls: '' },
+        { key: 'P3', label: 'Part 3　已收支票', cls: '' },
+        { key: 'P4', label: 'Part 4　未開立發票', cls: '' },
+        { key: 'Total', label: '📊 當月預估收款總額', cls: 'row-total' },
+    ];
+
+    let html = '<thead><tr><th>項目 ╲ 月份</th>';
+    for (const r of rows) html += `<th>${r.period}</th>`;
+    html += '</tr></thead><tbody>';
+
+    for (const p of parts) {
+        html += `<tr class="${p.cls}"><td>${p.label}</td>`;
+        for (const r of rows) {
+            const v = Math.round(r[p.key]);
+            html += `<td class="${v === 0 ? 'val-zero' : 'val-pos'}">${v === 0 ? '—' : fmtInt(v)}</td>`;
+        }
+        html += '</tr>';
+    }
+    html += '</tbody>';
+    document.getElementById('resultsTable').innerHTML = html;
+}
+
+// ── Utilities ──────────────────────────────────────────
+function fmt(n)    { return Math.round(n).toLocaleString('zh-TW'); }
+function fmtInt(n) { return n.toLocaleString('zh-TW'); }
+
+function showStatus(type, msg) {
+    const el = document.getElementById('statusBar');
+    el.className = `status-bar show ${type}`;
+    el.textContent = msg;
+}
+
+function resetAll() {
+    for (const k of Object.keys(files)) {
+        files[k] = null;
+        document.getElementById(`stat-${k}`).textContent = '';
+        document.getElementById(`fname-${k}`).textContent = '';
+        document.getElementById(`area-${k}`).classList.remove('ready','dragover');
+    }
+    const el = document.getElementById('statusBar');
+    el.className = 'status-bar';
+    document.getElementById('resultsCard').classList.add('hidden');
+    document.getElementById('calcBtn').disabled = false;
+}
+</script>
+</body>
+</html>
