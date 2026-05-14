@@ -1,414 +1,355 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Stan çä»»åä¸­å¿</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
-  background: #f0f2f5;
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stan 的任務中心</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-/* ââ å´éæ¬ ââ */
-.sidebar {
-  width: 240px;
-  background: #1a1f2e;
-  color: #cdd5e0;
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-}
-.sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid #2d3448; }
-.sidebar-header h1 { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
-.sidebar-header p { font-size: 11px; color: #6b7897; margin-top: 4px; }
-.sidebar-section { padding: 16px 12px 8px; }
-.sidebar-section-label {
-  font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 1px; color: #4a5568; padding: 0 8px; margin-bottom: 6px;
-}
-.sidebar-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 12px; border-radius: 8px; cursor: pointer;
-  font-size: 13px; color: #8a95ab; transition: all 0.15s; margin-bottom: 2px;
-}
-.sidebar-item:hover { background: #252b3d; color: #cdd5e0; }
-.sidebar-item.active { background: #2563eb20; color: #60a5fa; font-weight: 600; }
-.sidebar-item .icon { font-size: 15px; width: 20px; text-align: center; }
-.sidebar-item .badge {
-  margin-left: auto; background: #2563eb; color: #fff;
-  font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 700;
-}
+    /* ── 側邊欄 ── */
+    .sidebar {
+      width: 240px;
+      background: #1a1f2e;
+      color: #cdd5e0;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid #2d3448; }
+    .sidebar-header h1 { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+    .sidebar-header p  { font-size: 11px; color: #6b7897; margin-top: 4px; }
+    .sidebar-section { padding: 16px 12px 8px; }
+    .sidebar-section-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: #4a5568; padding: 0 8px; margin-bottom: 6px;
+    }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 8px; cursor: pointer;
+      font-size: 13px; color: #8a95ab; transition: all 0.15s; margin-bottom: 2px;
+    }
+    .sidebar-item:hover  { background: #252b3d; color: #cdd5e0; }
+    .sidebar-item.active { background: #2563eb20; color: #60a5fa; font-weight: 600; }
+    .sidebar-item .icon  { font-size: 15px; width: 20px; text-align: center; }
+    .sidebar-item .badge {
+      margin-left: auto; background: #2563eb; color: #fff;
+      font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 700;
+    }
 
-/* ââ ä¸»å§å®¹ ââ */
-.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-.topbar {
-  background: #fff; border-bottom: 1px solid #e5e9f0;
-  padding: 0 28px; height: 56px;
-  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
-}
-.topbar-title { font-size: 15px; font-weight: 700; color: #1a1f2e; }
-.topbar-date { font-size: 12px; color: #8a95ab; }
-.content { padding: 28px; flex: 1; }
+    /* ── 主內容 ── */
+    .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+    .topbar {
+      background: #fff; border-bottom: 1px solid #e5e9f0;
+      padding: 0 28px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .topbar-title { font-size: 15px; font-weight: 700; color: #1a1f2e; }
+    .topbar-date  { font-size: 12px; color: #8a95ab; }
+    .content { padding: 28px; flex: 1; }
 
-/* ââ é é¢åæ ââ */
-.page { display: none; }
-.page.active { display: block; }
+    /* ── 頁面切換 ── */
+    .page { display: none; }
+    .page.active { display: block; }
 
-/* ââ å¡ç ââ */
-.card {
-  background: #fff; border-radius: 12px; padding: 24px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 20px;
-}
-.card-title { font-size: 14px; font-weight: 700; color: #1a1f2e; margin-bottom: 6px; }
-.card-desc { font-size: 12px; color: #8a95ab; margin-bottom: 20px; line-height: 1.6; }
+    /* ── 卡片 ── */
+    .card {
+      background: #fff; border-radius: 12px; padding: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 20px;
+    }
+    .card-title { font-size: 14px; font-weight: 700; color: #1a1f2e; margin-bottom: 6px; }
+    .card-desc  { font-size: 12px; color: #8a95ab; margin-bottom: 20px; line-height: 1.6; }
 
-/* ââ ä¸å³å ââ */
-.upload-area {
-  border: 2px dashed #c7d2e8; border-radius: 10px; padding: 32px;
-  text-align: center; cursor: pointer; transition: all 0.2s;
-  background: #f8faff; position: relative;
-}
-.upload-area:hover, .upload-area.dragover { border-color: #2563eb; background: #eff4ff; }
-.upload-area input[type="file"] {
-  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-}
-.upload-icon { font-size: 36px; margin-bottom: 10px; }
-.upload-area p { font-size: 13px; color: #4a5568; }
-.upload-area .hint { font-size: 11px; color: #a0aec0; margin-top: 6px; }
-.file-name { margin-top: 12px; font-size: 12px; color: #2563eb; font-weight: 600; display: none; }
+    /* ── 上傳區 ── */
+    .upload-area {
+      border: 2px dashed #c7d2e8; border-radius: 10px; padding: 32px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+      background: #f8faff; position: relative;
+    }
+    .upload-area:hover, .upload-area.dragover { border-color: #2563eb; background: #eff4ff; }
+    .upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-icon { font-size: 36px; margin-bottom: 10px; }
+    .upload-area p { font-size: 13px; color: #4a5568; }
+    .upload-area .hint { font-size: 11px; color: #a0aec0; margin-top: 6px; }
+    .file-name { margin-top: 12px; font-size: 12px; color: #2563eb; font-weight: 600; display: none; }
 
-/* ââ æé ââ */
-.btn {
-  padding: 10px 22px; border-radius: 8px; font-size: 13px;
-  font-weight: 600; cursor: pointer; border: none; transition: all 0.15s;
-}
-.btn-primary { background: #2563eb; color: #fff; }
-.btn-primary:hover { background: #1d4ed8; }
-.btn-primary:disabled { background: #93afd8; cursor: not-allowed; }
-.btn-secondary { background: #f0f2f5; color: #4a5568; }
-.btn-secondary:hover { background: #e2e8f0; }
-.btn-row { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
+    /* ── 按鈕 ── */
+    .btn {
+      padding: 10px 22px; border-radius: 8px; font-size: 13px;
+      font-weight: 600; cursor: pointer; border: none; transition: all 0.15s;
+    }
+    .btn-primary  { background: #2563eb; color: #fff; }
+    .btn-primary:hover  { background: #1d4ed8; }
+    .btn-primary:disabled { background: #93afd8; cursor: not-allowed; }
+    .btn-secondary { background: #f0f2f5; color: #4a5568; }
+    .btn-secondary:hover { background: #e2e8f0; }
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
 
-/* ââ çµæ (åº«å­) ââ */
-.result-box { display: none; margin-top: 24px; }
-.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-.result-card { border-radius: 10px; padding: 20px; text-align: center; }
-.result-card.buyout { background: linear-gradient(135deg, #1e40af, #2563eb); color: #fff; }
-.result-card.temp { background: linear-gradient(135deg, #065f46, #059669); color: #fff; }
-.result-card .label { font-size: 11px; opacity: 0.8; margin-bottom: 8px; }
-.result-card .amount { font-size: 26px; font-weight: 800; }
-.result-card .unit { font-size: 11px; opacity: 0.7; margin-top: 4px; }
+    /* ── 結果 (庫存) ── */
+    .result-box { display: none; margin-top: 24px; }
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .result-card { border-radius: 10px; padding: 20px; text-align: center; }
+    .result-card.buyout { background: linear-gradient(135deg, #1e40af, #2563eb); color: #fff; }
+    .result-card.temp   { background: linear-gradient(135deg, #065f46, #059669); color: #fff; }
+    .result-card .label  { font-size: 11px; opacity: 0.8; margin-bottom: 8px; }
+    .result-card .amount { font-size: 26px; font-weight: 800; }
+    .result-card .unit   { font-size: 11px; opacity: 0.7; margin-top: 4px; }
 
-/* ââ è¡¨æ ¼ (å±ç¨) ââ */
-.table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid #e5e9f0; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-thead th {
-  background: #f8faff; padding: 10px 12px; text-align: left;
-  font-weight: 700; color: #4a5568; border-bottom: 1px solid #e5e9f0; white-space: nowrap;
-}
-tbody td { padding: 9px 12px; border-bottom: 1px solid #f0f2f5; color: #2d3748; }
-tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover td { background: #f8faff; }
-.tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; }
-.tag-adjusted { background: #fef3c7; color: #92400e; }
-.tag-normal { background: #f0f4ff; color: #3730a3; }
+    /* ── 表格 (共用) ── */
+    .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid #e5e9f0; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    thead th {
+      background: #f8faff; padding: 10px 12px; text-align: left;
+      font-weight: 700; color: #4a5568; border-bottom: 1px solid #e5e9f0; white-space: nowrap;
+    }
+    tbody td { padding: 9px 12px; border-bottom: 1px solid #f0f2f5; color: #2d3748; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #f8faff; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; }
+    .tag-adjusted { background: #fef3c7; color: #92400e; }
+    .tag-normal   { background: #f0f4ff; color: #3730a3; }
 
-/* ââ Loading ââ */
-.loading { display: none; align-items: center; gap: 8px; font-size: 13px; color: #2563eb; }
-.spinner {
-  width: 16px; height: 16px; border: 2px solid #dbeafe;
-  border-top-color: #2563eb; border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+    /* ── Loading ── */
+    .loading { display: none; align-items: center; gap: 8px; font-size: 13px; color: #2563eb; }
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid #dbeafe;
+      border-top-color: #2563eb; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ââ Email ââ */
-.email-stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
-.email-stat { border-radius: 10px; padding: 16px; text-align: center; }
-.email-stat.reply { background: linear-gradient(135deg,#7c3aed,#a78bfa); color:#fff; }
-.email-stat.track { background: linear-gradient(135deg,#0369a1,#38bdf8); color:#fff; }
-.email-stat.marked { background: linear-gradient(135deg,#065f46,#34d399); color:#fff; }
-.email-stat .stat-num { font-size: 28px; font-weight: 800; }
-.email-stat .stat-label { font-size: 11px; opacity: 0.85; margin-top: 4px; }
-.email-section { margin-bottom: 16px; }
-.email-section-header {
-  display: flex; align-items: center; gap: 8px; padding: 10px 14px;
-  border-radius: 8px 8px 0 0; font-size: 13px; font-weight: 700; cursor: pointer; user-select: none;
-}
-.email-section-header.reply-hdr { background: #ede9fe; color: #5b21b6; }
-.email-section-header.track-hdr { background: #e0f2fe; color: #0369a1; }
-.email-section-header.ref-hdr { background: #f0fdf4; color: #166534; }
-.email-section-header.slack-hdr { background: #fef3c7; color: #92400e; }
-.email-section-header .count-badge {
-  margin-left: auto; background: rgba(0,0,0,0.12); border-radius: 10px; padding: 1px 8px; font-size: 11px;
-}
-.email-list { border:1px solid #e5e9f0; border-top:none; border-radius:0 0 8px 8px; overflow:hidden; }
-.email-item { padding: 12px 16px; border-bottom: 1px solid #f0f2f5; transition: background 0.1s; }
-.email-item:last-child { border-bottom: none; }
-.email-item:hover { background: #f8faff; }
-.email-item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-.email-from { font-size: 13px; font-weight: 700; color: #1a1f2e; }
-.email-date { font-size: 11px; color: #8a95ab; flex-shrink: 0; margin-left: 8px; }
-.email-subject { font-size: 12px; color: #2d3748; margin-bottom: 4px; }
-.email-snippet { font-size: 11px; color: #8a95ab; line-height: 1.5; }
-.email-tag {
-  display: inline-block; padding: 1px 6px; border-radius: 10px;
-  font-size: 10px; font-weight: 700; background: #fef3c7; color: #92400e; margin-left: 6px;
-}
-.email-result-box { display: none; }
-.email-fetch-time { font-size: 11px; color: #8a95ab; text-align: right; margin-bottom: 12px; }
+    /* ── Email ── */
+    .email-stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+    .email-stat { border-radius: 10px; padding: 16px; text-align: center; }
+    .email-stat.reply  { background: linear-gradient(135deg,#7c3aed,#a78bfa); color:#fff; }
+    .email-stat.track  { background: linear-gradient(135deg,#0369a1,#38bdf8); color:#fff; }
+    .email-stat.marked { background: linear-gradient(135deg,#065f46,#34d399); color:#fff; }
+    .email-stat .stat-num   { font-size: 28px; font-weight: 800; }
+    .email-stat .stat-label { font-size: 11px; opacity: 0.85; margin-top: 4px; }
+    .email-section { margin-bottom: 16px; }
+    .email-section-header {
+      display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+      border-radius: 8px 8px 0 0; font-size: 13px; font-weight: 700; cursor: pointer; user-select: none;
+    }
+    .email-section-header.reply-hdr { background: #ede9fe; color: #5b21b6; }
+    .email-section-header.track-hdr { background: #e0f2fe; color: #0369a1; }
+    .email-section-header.ref-hdr   { background: #f0fdf4; color: #166534; }
+    .email-section-header .count-badge {
+      margin-left: auto; background: rgba(0,0,0,0.12); border-radius: 10px; padding: 1px 8px; font-size: 11px;
+    }
+    .email-list { border:1px solid #e5e9f0; border-top:none; border-radius:0 0 8px 8px; overflow:hidden; }
+    .email-item { padding: 12px 16px; border-bottom: 1px solid #f0f2f5; transition: background 0.1s; }
+    .email-item:last-child { border-bottom: none; }
+    .email-item:hover { background: #f8faff; }
+    .email-item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+    .email-from    { font-size: 13px; font-weight: 700; color: #1a1f2e; }
+    .email-date    { font-size: 11px; color: #8a95ab; flex-shrink: 0; margin-left: 8px; }
+    .email-subject { font-size: 12px; color: #2d3748; margin-bottom: 4px; }
+    .email-snippet { font-size: 11px; color: #8a95ab; line-height: 1.5; }
+    .email-tag {
+      display: inline-block; padding: 1px 6px; border-radius: 10px;
+      font-size: 10px; font-weight: 700; background: #fef3c7; color: #92400e; margin-left: 6px;
+    }
+    .email-result-box { display: none; }
+    .email-fetch-time { font-size: 11px; color: #8a95ab; text-align: right; margin-bottom: 12px; }
 
-/* ââ é¯èª¤ ââ */
-.error-msg {
-  display: none; background: #fff5f5; border: 1px solid #fed7d7;
-  border-radius: 8px; padding: 12px 16px; margin-top: 16px; font-size: 12px; color: #c53030;
-}
-.summary-row { display: flex; gap: 16px; margin-bottom: 16px; font-size: 12px; color: #4a5568; }
-.summary-row span { background: #f0f4ff; padding: 4px 10px; border-radius: 6px; }
+    /* ── 錯誤 ── */
+    .error-msg {
+      display: none; background: #fff5f5; border: 1px solid #fed7d7;
+      border-radius: 8px; padding: 12px 16px; margin-top: 16px; font-size: 12px; color: #c53030;
+    }
+    .summary-row { display: flex; gap: 16px; margin-bottom: 16px; font-size: 12px; color: #4a5568; }
+    .summary-row span { background: #f0f4ff; padding: 4px 10px; border-radius: 6px; }
 
-/* ââââââââââââââââââââââââââââââââââââââââââââ
-  #ææ¶å¸³æ¬¾è¨ç®å°ç¨æ¨£å¼
-ââââââââââââââââââââââââââââââââââââââââââââ */
-.ar-config-grid {
-  display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start;
-}
-.ar-form-label {
-  font-size: 11px; font-weight: 700; color: #8a95ab;
-  text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 5px;
-}
-.ar-input, .ar-textarea {
-  width: 100%; background: #f8faff; border: 1px solid #c7d2e8;
-  border-radius: 8px; color: #1a1f2e; padding: 9px 12px;
-  font-size: 12px; font-family: inherit; outline: none; transition: border-color 0.2s;
-}
-.ar-input:focus, .ar-textarea:focus { border-color: #2563eb; }
-.ar-textarea { resize: vertical; min-height: 68px; }
-.ar-hint { font-size: 11px; color: #a0aec0; margin-top: 4px; line-height: 1.5; }
+    /* ════════════════════════════════════════════
+       應收帳款計算專用樣式
+    ════════════════════════════════════════════ */
 
-.ar-files-grid {
-  display: grid; grid-template-columns: repeat(5,1fr); gap: 12px;
-}
-@media(max-width:900px){ .ar-files-grid{ grid-template-columns: repeat(3,1fr); } }
+    /* 設定區 */
+    .ar-config-grid {
+      display: grid; grid-template-columns: 200px 1fr; gap: 16px; align-items: start;
+    }
+    .ar-form-label {
+      font-size: 11px; font-weight: 700; color: #8a95ab;
+      text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 5px;
+    }
+    .ar-input, .ar-textarea {
+      width: 100%; background: #f8faff; border: 1px solid #c7d2e8;
+      border-radius: 8px; color: #1a1f2e; padding: 9px 12px;
+      font-size: 12px; font-family: inherit; outline: none; transition: border-color 0.2s;
+    }
+    .ar-input:focus, .ar-textarea:focus { border-color: #2563eb; }
+    .ar-textarea { resize: vertical; min-height: 68px; }
+    .ar-hint { font-size: 11px; color: #a0aec0; margin-top: 4px; line-height: 1.5; }
 
-.ar-file-area {
-  background: #f8faff; border: 2px dashed #c7d2e8;
-  border-radius: 10px; padding: 16px 10px; text-align: center;
-  cursor: pointer; transition: all 0.2s; position: relative;
-  min-height: 130px; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 5px;
-}
-.ar-file-area:hover { border-color: #2563eb; }
-.ar-file-area.dragover { border-color: #2563eb; background: #eff4ff; }
-.ar-file-area.ready { border-color: #059669; border-style: solid; }
-.ar-file-area input[type="file"] {
-  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-}
-.ar-part-tag {
-  font-size: 10px; font-weight: 700; color: #fff;
-  padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em;
-}
-.ar-file-icon { font-size: 1.4rem; }
-.ar-file-desc { font-size: 11px; color: #8a95ab; line-height: 1.4; }
-.ar-file-name { font-size: 10px; color: #059669; word-break: break-all; line-height: 1.3; }
+    /* 五格上傳 */
+    .ar-files-grid {
+      display: grid; grid-template-columns: repeat(5,1fr); gap: 12px;
+    }
+    @media(max-width:900px){ .ar-files-grid{ grid-template-columns: repeat(3,1fr); } }
 
-.ar-status {
-  display: none; padding: 10px 14px; border-radius: 8px;
-  font-size: 12px; margin-top: 12px; text-align: center;
-}
-.ar-status.info { background: #eff4ff; color: #2563eb; border: 1px solid #bfdbfe; }
-.ar-status.success { background: #f0fdf4; color: #059669; border: 1px solid #a7f3d0; }
-.ar-status.error { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; }
+    .ar-file-area {
+      background: #f8faff; border: 2px dashed #c7d2e8;
+      border-radius: 10px; padding: 16px 10px; text-align: center;
+      cursor: pointer; transition: all 0.2s; position: relative;
+      min-height: 130px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 5px;
+    }
+    .ar-file-area:hover  { border-color: #2563eb; }
+    .ar-file-area.dragover { border-color: #2563eb; background: #eff4ff; }
+    .ar-file-area.ready  { border-color: #059669; border-style: solid; }
+    .ar-file-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .ar-part-tag {
+      font-size: 10px; font-weight: 700; color: #fff;
+      padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em;
+    }
+    .ar-file-icon { font-size: 1.4rem; }
+    .ar-file-desc { font-size: 11px; color: #8a95ab; line-height: 1.4; }
+    .ar-file-name { font-size: 10px; color: #059669; word-break: break-all; line-height: 1.3; }
 
-.ar-summary-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 12px; margin-bottom: 20px;
-}
-.ar-summary-card {
-  background: #f8faff; border: 1px solid #e5e9f0;
-  border-radius: 10px; padding: 14px 16px; text-align: center;
-}
-.ar-summary-card .sl { font-size: 11px; color: #8a95ab; margin-bottom: 5px; }
-.ar-summary-card .sv { font-size: 1.15rem; font-weight: 800; color: #2563eb; }
-.ar-summary-card .ss { font-size: 10px; color: #a0aec0; margin-top: 3px; }
+    /* 狀態列 */
+    .ar-status {
+      display: none; padding: 10px 14px; border-radius: 8px;
+      font-size: 12px; margin-top: 12px; text-align: center;
+    }
+    .ar-status.info    { background: #eff4ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    .ar-status.success { background: #f0fdf4; color: #059669; border: 1px solid #a7f3d0; }
+    .ar-status.error   { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; }
 
-.ar-table-wrap { overflow-x: auto; }
-.ar-results-table {
-  width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap;
-}
-.ar-results-table th {
-  background: #f8faff; padding: 9px 14px; text-align: center;
-  font-weight: 700; color: #4a5568; border-bottom: 1px solid #e5e9f0; font-size: 11px;
-}
-.ar-results-table th:first-child { text-align: left; position: sticky; left: 0; z-index: 1; min-width: 160px; }
-.ar-results-table td { padding: 9px 14px; border-bottom: 1px solid #f0f2f5; text-align: right; }
-.ar-results-table td:first-child {
-  text-align: left; color: #4a5568; font-size: 11px; position: sticky; left: 0; background: #fff;
-}
-.ar-results-table tr:hover td { background: #f8faff; }
-.ar-results-table tr:hover td:first-child { background: #f8faff; }
-.ar-results-table tr.ar-total-row td {
-  background: #eff4ff; font-weight: 700; color: #1e40af;
-  font-size: 12px; border-top: 2px solid #bfdbfe;
-}
-.ar-results-table tr.ar-total-row td:first-child { background: #eff4ff; color: #1a1f2e; }
-.ar-results-table tr.ar-total-row:hover td { background: #dbeafe; }
-.ar-results-table tr.ar-total-row:hover td:first-child { background: #dbeafe; }
-.ar-val-zero { color: #c7d2e8 !important; }
+    /* 摘要卡片 */
+    .ar-summary-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 12px; margin-bottom: 20px;
+    }
+    .ar-summary-card {
+      background: #f8faff; border: 1px solid #e5e9f0;
+      border-radius: 10px; padding: 14px 16px; text-align: center;
+    }
+    .ar-summary-card .sl { font-size: 11px; color: #8a95ab; margin-bottom: 5px; }
+    .ar-summary-card .sv { font-size: 1.15rem; font-weight: 800; color: #2563eb; }
+    .ar-summary-card .ss { font-size: 10px; color: #a0aec0; margin-top: 3px; }
 
-.ar-legend {
-  display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; font-size: 11px; color: #8a95ab;
-}
-.ar-legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+    /* 結果表格 */
+    .ar-table-wrap { overflow-x: auto; }
+    .ar-results-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap;
+    }
+    .ar-results-table th {
+      background: #f8faff; padding: 9px 14px; text-align: center;
+      font-weight: 700; color: #4a5568; border-bottom: 1px solid #e5e9f0; font-size: 11px;
+    }
+    .ar-results-table th:first-child { text-align: left; position: sticky; left: 0; z-index: 1; min-width: 160px; }
+    .ar-results-table td { padding: 9px 14px; border-bottom: 1px solid #f0f2f5; text-align: right; }
+    .ar-results-table td:first-child {
+      text-align: left; color: #4a5568; font-size: 11px; position: sticky; left: 0; background: #fff;
+    }
+    .ar-results-table tr:hover td { background: #f8faff; }
+    .ar-results-table tr:hover td:first-child { background: #f8faff; }
+    .ar-results-table tr.ar-total-row td {
+      background: #eff4ff; font-weight: 700; color: #1e40af;
+      font-size: 12px; border-top: 2px solid #bfdbfe;
+    }
+    .ar-results-table tr.ar-total-row td:first-child { background: #eff4ff; color: #1a1f2e; }
+    .ar-results-table tr.ar-total-row:hover td { background: #dbeafe; }
+    .ar-results-table tr.ar-total-row:hover td:first-child { background: #dbeafe; }
+    .ar-val-zero { color: #c7d2e8 !important; }
 
-/* ââ æ¯é±éé³ä¸è¼ ââ */
-.rec-date-row { display: flex; gap: 16px; margin-bottom: 20px; }
-.rec-date-group { flex: 1; }
-.rec-date-group label { display: block; font-size: 11px; font-weight: 700; color: #8a95ab; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
-.btn-rec { background: linear-gradient(135deg, #e53935, #ff6f00); color: #fff; }
-.btn-rec:hover { opacity: 0.9; }
-.rec-status { margin-top: 16px; padding: 12px 16px; border-radius: 8px; font-size: 13px; display: none; }
-.rec-status.success { background: #f0fdf4; color: #059669; border: 1px solid #a7f3d0; display: block; }
-.rec-status.error { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; display: block; }
-.rec-people { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.rec-person { background: #eff4ff; color: #2563eb; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-
-/* ââââââââââââââââââââââââââââââââââââââââââââ
-   Slack æ´åå°ç¨æ¨£å¼
-ââââââââââââââââââââââââââââââââââââââââââââ */
-.slack-token-row {
-  display: flex; gap: 10px; align-items: center; margin-bottom: 10px;
-}
-.slack-token-row .ar-input {
-  flex: 1; font-family: 'Courier New', monospace; font-size: 12px; letter-spacing: 0.02em;
-}
-.slack-setup-status {
-  margin-top: 10px; font-size: 12px; padding: 8px 12px; border-radius: 8px;
-  display: none;
-}
-.slack-setup-status.ok { background: #f0fdf4; color: #059669; border: 1px solid #a7f3d0; display: block; }
-.slack-setup-status.err { background: #fff5f5; color: #c53030; border: 1px solid #fed7d7; display: block; }
-.slack-setup-status.info { background: #eff4ff; color: #2563eb; border: 1px solid #bfdbfe; display: block; }
-.slack-connected-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: #eff4ff; color: #2563eb; padding: 4px 10px;
-  border-radius: 20px; font-size: 11px; font-weight: 600;
-}
-.slack-scope-list {
-  background: #f8faff; border: 1px solid #e5e9f0; border-radius: 8px;
-  padding: 12px 16px; margin-top: 12px; font-size: 11px; color: #4a5568; line-height: 1.8;
-}
-.slack-scope-list code {
-  background: #ede9fe; color: #5b21b6; padding: 1px 5px; border-radius: 4px; font-size: 10px;
-}
-.slack-stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
-.slack-stat { border-radius: 10px; padding: 16px; text-align: center; }
-.slack-stat.s-mention { background: linear-gradient(135deg,#dc2626,#f87171); color:#fff; }
-.slack-stat.s-dm      { background: linear-gradient(135deg,#0369a1,#38bdf8); color:#fff; }
-.slack-stat.s-thread  { background: linear-gradient(135deg,#7c3aed,#a78bfa); color:#fff; }
-.slack-stat .stat-num   { font-size: 28px; font-weight: 800; }
-.slack-stat .stat-label { font-size: 11px; opacity: 0.85; margin-top: 4px; }
-.slack-msg-link {
-  display: inline-block; font-size: 10px; color: #2563eb; text-decoration: none;
-  background: #eff4ff; padding: 1px 6px; border-radius: 6px; margin-left: 6px;
-}
-.slack-msg-link:hover { background: #dbeafe; }
-.slack-warn {
-  background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;
-  padding: 10px 14px; font-size: 11px; color: #92400e; margin-top: 12px; line-height: 1.6;
-}
-</style>
+    .ar-legend {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; font-size: 11px; color: #8a95ab;
+    }
+    .ar-legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+  </style>
 </head>
 <body>
 
-<!-- âââ å´éæ¬ âââ -->
+<!-- ═══ 側邊欄 ═══ -->
 <div class="sidebar">
   <div class="sidebar-header">
-    <h1>ð ä»»åä¸­å¿</h1>
-    <p>Stan çèªååå·¥ä½å°</p>
+    <h1>📋 任務中心</h1>
+    <p>Stan 的自動化工作台</p>
   </div>
   <div class="sidebar-section">
-    <div class="sidebar-section-label">æ¯æ¥ä»»å</div>
+    <div class="sidebar-section-label">每日任務</div>
     <div class="sidebar-item" id="nav-email" onclick="goTo('email')">
-      <span class="icon">âï¸</span> æ´ç Email
-    </div>
-    <div class="sidebar-item" id="nav-slack" onclick="goTo('slack')">
-      <span class="icon">ð¬</span> æ´ç Slack
+      <span class="icon">✉️</span> 整理 Email
     </div>
   </div>
   <div class="sidebar-section">
-    <div class="sidebar-section-label">æ¯é±ä»»å</div>
-    <div class="sidebar-item" id="nav-recording" onclick="goTo('recording')">
-      <span class="icon">ð</span> æ¯é±éé³ä¸è¼
-    </div>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">æ¯æä»»å</div>
+    <div class="sidebar-section-label">每月任務</div>
     <div class="sidebar-item active" id="nav-inventory" onclick="goTo('inventory')">
-      <span class="icon">ð¦</span> åº«å­éé¡è¨ç®
+      <span class="icon">📦</span> 庫存金額計算
+      <span class="badge">NEW</span>
     </div>
     <div class="sidebar-item" id="nav-ar" onclick="goTo('ar-ap')">
-      <span class="icon">ð°</span> ææ¶æä»è¨ç®
+      <span class="icon">💰</span> 應收應付計算
+      <span class="badge" style="background:#059669">NEW</span>
     </div>
   </div>
 </div>
 
-<!-- âââ ä¸»å§å®¹ âââ -->
+<!-- ═══ 主內容 ═══ -->
 <div class="main">
   <div class="topbar">
-    <div class="topbar-title" id="page-title">ð¦ åº«å­éé¡è¨ç®</div>
+    <div class="topbar-title" id="page-title">📦 庫存金額計算</div>
     <div class="topbar-date" id="today-date"></div>
   </div>
   <div class="content">
 
-    <!-- ââ åº«å­è¨ç®é  ââ -->
+    <!-- ── 庫存計算頁 ── -->
     <div class="page active" id="page-inventory">
       <div class="card">
-        <div class="card-title">ä¸å³åº«å­å ±è¡¨</div>
+        <div class="card-title">上傳庫存報表</div>
         <div class="card-desc">
-          ä¸å³å¾å¬å¸ç³»çµ±å¯åºç Excel å ±è¡¨ï¼éåå«ãç¾æåº«å­å ±è¡¨ãå·¥ä½è¡¨ï¼ã<br>
-          ç³»çµ±å°èªåä¾å» ååºèèª¿æ´å¹æ ¼ï¼è¨ç®è²·æ·èæ«æåº«å­éé¡ã
+          上傳從公司系統匯出的 Excel 報表（需包含「現有庫存報表」工作表）。<br>
+          系統將自動依廠商序號調整價格，計算買斷與暫時庫存金額。
         </div>
         <div class="upload-area" id="upload-area">
           <input type="file" id="file-input" accept=".xlsx,.xls,.csv" />
-          <div class="upload-icon">ð</div>
-          <p>é»ææææ³å ±è¡¨æªæ¡è³æ­¤</p>
-          <p class="hint">æ¯æ´ .xlsxã.xlsã.csv</p>
+          <div class="upload-icon">📂</div>
+          <p>點擊或拖曳報表檔案至此</p>
+          <p class="hint">支援 .xlsx、.xls、.csv</p>
         </div>
         <div class="file-name" id="file-name"></div>
         <div class="error-msg" id="error-msg"></div>
         <div class="btn-row">
-          <button class="btn btn-primary" id="calc-btn" onclick="calculate()" disabled>éå§è¨ç®</button>
-          <button class="btn btn-secondary" onclick="reset()">éç½®</button>
-          <div class="loading" id="loading"><div class="spinner"></div> è¨ç®ä¸­...</div>
+          <button class="btn btn-primary" id="calc-btn" onclick="calculate()" disabled>開始計算</button>
+          <button class="btn btn-secondary" onclick="reset()">重置</button>
+          <div class="loading" id="loading"><div class="spinner"></div> 計算中...</div>
         </div>
       </div>
       <div class="result-box" id="result-box">
         <div class="result-grid">
           <div class="result-card buyout">
-            <div class="label">è²·æ·åº«å­ç¸½éé¡</div>
-            <div class="amount" id="total-buyout">â</div>
-            <div class="unit">æ°å°å¹£ (TWD)</div>
+            <div class="label">買斷庫存總金額</div>
+            <div class="amount" id="total-buyout">—</div>
+            <div class="unit">新台幣 (TWD)</div>
           </div>
           <div class="result-card temp">
-            <div class="label">æ«æåº«å­ç¸½éé¡</div>
-            <div class="amount" id="total-temp">â</div>
-            <div class="unit">æ°å°å¹£ (TWD)</div>
+            <div class="label">暫時庫存總金額</div>
+            <div class="amount" id="total-temp">—</div>
+            <div class="unit">新台幣 (TWD)</div>
           </div>
         </div>
         <div class="card">
-          <div class="card-title">æç´°è³æ</div>
+          <div class="card-title">明細資料</div>
           <div class="summary-row" id="summary-row"></div>
           <div class="table-wrap">
             <table id="detail-table">
               <thead><tr>
-                <th>æ¡è³¼å» ååºè</th><th>å¹³åé²è²¨å¹</th><th>èª¿æ´å¾å¹æ ¼</th>
-                <th>èª¿æ´èªªæ</th><th>è²·æ·åº«å­</th><th>è²·æ·åº«å­éé¡</th>
-                <th>æ«æåº«å­</th><th>æ«æåº«å­éé¡</th>
+                <th>採購廠商序號</th><th>平均進貨價</th><th>調整後價格</th>
+                <th>調整說明</th><th>買斷庫存</th><th>買斷庫存金額</th>
+                <th>暫時庫存</th><th>暫時庫存金額</th>
               </tr></thead>
               <tbody id="detail-body"></tbody>
             </table>
@@ -417,26 +358,26 @@ tbody tr:hover td { background: #f8faff; }
       </div>
     </div>
 
-    <!-- ââ Email é  ââ -->
+    <!-- ── Email 頁 ── -->
     <div class="page" id="page-email">
       <div class="card">
-        <div class="card-title">æ¯æ¥ Email æ´ç</div>
+        <div class="card-title">每日 Email 整理</div>
         <div class="card-desc">
-          æä¸æéå¾ï¼ç³»çµ±å°èªåæ ntuhcliao@gmail.com æææªè®ä¿¡ä»¶æ¨ç¤ºçºå·²è®ï¼<br>
-          ä¸¦æ´ç stanliao@stareksci.com å stanliao@lockincenter.com è¿å©å¤©çéè¦ä¿¡ä»¶ï¼ä¾åªåé åºåé¡é¡¯ç¤ºã
+          按下按鈕後，系統將自動把 ntuhcliao@gmail.com 所有未讀信件標示為已讀，<br>
+          並整理 stanliao@stareksci.com 及 stanliao@lockincenter.com 近兩天的重要信件，依優先順序分類顯示。
         </div>
         <div class="btn-row">
-          <button class="btn btn-primary" onclick="runEmail()">â¶ éå§æ´ç Email</button>
-          <div class="loading" id="email-loading"><div class="spinner"></div> æ´çä¸­ï¼ç´é 20-30 ç§...</div>
+          <button class="btn btn-primary" onclick="runEmail()">▶ 開始整理 Email</button>
+          <div class="loading" id="email-loading"><div class="spinner"></div> 整理中，約需 20-30 秒...</div>
         </div>
         <div class="error-msg" id="email-error"></div>
       </div>
       <div class="email-result-box" id="email-result-box">
         <div class="email-fetch-time" id="email-fetch-time"></div>
         <div class="email-stat-grid">
-          <div class="email-stat reply"><div class="stat-num" id="stat-reply">0</div><div class="stat-label">éè¦åè¦</div></div>
-          <div class="email-stat track"><div class="stat-num" id="stat-track">0</div><div class="stat-label">å¾è¾¦è¿½è¹¤</div></div>
-          <div class="email-stat marked"><div class="stat-num" id="stat-marked">0</div><div class="stat-label">å·²æ¨ç¤ºå·²è®</div></div>
+          <div class="email-stat reply"><div class="stat-num" id="stat-reply">0</div><div class="stat-label">需要回覆</div></div>
+          <div class="email-stat track"><div class="stat-num" id="stat-track">0</div><div class="stat-label">待辦追蹤</div></div>
+          <div class="email-stat marked"><div class="stat-num" id="stat-marked">0</div><div class="stat-label">已標示已讀</div></div>
         </div>
         <div class="email-section" id="section-reply"></div>
         <div class="email-section" id="section-track"></div>
@@ -444,233 +385,133 @@ tbody tr:hover td { background: #f8faff; }
       </div>
     </div>
 
-    <!-- ââ Slack æ¯æ¥æ´çé  ââ -->
-    <div class="page" id="page-slack">
-
-      <!-- Step 1: è¨­å® Tokenï¼é¦æ¬¡ä½¿ç¨ï¼ -->
-      <div class="card" id="slack-setup-card">
-        <div class="card-title">âï¸ è¨­å® Slack Tokenï¼é¦æ¬¡ä½¿ç¨ï¼</div>
-        <div class="card-desc">
-          è«è¼¸å¥ Slack <strong>User OAuth Token</strong>ï¼ä»¥ <code style="background:#ede9fe;color:#5b21b6;padding:1px 5px;border-radius:4px;">xoxp-</code> éé ­ï¼ã<br>
-          Token åªå²å­å¨ä½ ççè¦½å¨æ¬æ©ï¼ä¸æå³éè³ä»»ä½ä¼ºæå¨ã
-        </div>
-        <div class="slack-token-row">
-          <input type="password" id="slack-token-input" class="ar-input"
-            placeholder="xoxp-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-          <button class="btn btn-primary" onclick="saveSlackToken()">â å²å­ä¸¦é©è­</button>
-        </div>
-        <div id="slack-setup-status" class="slack-setup-status"></div>
-        <div class="slack-scope-list">
-          <strong>ð ç³è« Token æ­¥é©ï¼ä¸æ¬¡æ§è¨­å®ï¼ï¼</strong><br>
-          1. åå¾ <a href="https://api.slack.com/apps" target="_blank" style="color:#2563eb;">api.slack.com/apps</a> â å»ºç«æ° Appï¼From scratchï¼<br>
-          2. OAuth &amp; Permissions â User Token Scopes å å¥ï¼<br>
-          &nbsp;&nbsp;<code>search:read</code> <code>channels:history</code> <code>groups:history</code>
-          <code>im:history</code> <code>mpim:history</code> <code>channels:read</code>
-          <code>groups:read</code> <code>im:read</code> <code>mpim:read</code> <code>users:read</code><br>
-          3. Install App to Workspace â è¤è£½ <strong>User OAuth Token</strong>ï¼xoxp-...ï¼è²¼å°ä¸æ¹
-        </div>
-      </div>
-
-      <!-- ä¸»æä½å¡çï¼å·²è¨­å® Token å¾é¡¯ç¤ºï¼ -->
-      <div class="card" id="slack-main-card" style="display:none;">
-        <div class="card-title">ð¬ æ¯æ¥ Slack æ´ç</div>
-        <div class="card-desc">
-          èªåæåä»å¤© Slack ææ @mentionsï¼é »éãThreadï¼ãç§è¨ï¼DMï¼ï¼ä¾åªåé åºæ´çã<br>
-          <span id="slack-user-badge"></span>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-primary" onclick="runSlack()">â¶ éå§æ´ç Slack</button>
-          <button class="btn btn-secondary" onclick="resetSlackToken()" style="font-size:12px;padding:9px 14px;">éè¨­ Token</button>
-          <div class="loading" id="slack-loading"><div class="spinner"></div> <span id="slack-loading-text">æåä¸­ï¼ç´é 15-30 ç§...</span></div>
-        </div>
-        <div class="error-msg" id="slack-error"></div>
-      </div>
-
-      <!-- çµæå -->
-      <div id="slack-result-box" style="display:none;">
-        <div class="email-fetch-time" id="slack-fetch-time"></div>
-        <div class="slack-stat-grid">
-          <div class="slack-stat s-mention">
-            <div class="stat-num" id="slack-stat-mentions">0</div>
-            <div class="stat-label">@æå°æ</div>
-          </div>
-          <div class="slack-stat s-dm">
-            <div class="stat-num" id="slack-stat-dms">0</div>
-            <div class="stat-label">ç§è¨ DM</div>
-          </div>
-          <div class="slack-stat s-thread">
-            <div class="stat-num" id="slack-stat-threads">0</div>
-            <div class="stat-label">Thread åè¦</div>
-          </div>
-        </div>
-        <div class="email-section" id="slack-section-mentions"></div>
-        <div class="email-section" id="slack-section-dms"></div>
-        <div class="email-section" id="slack-section-threads"></div>
-      </div>
-
-    </div><!-- /page-slack -->
-
-    <!-- ââ ææ¶æä»é  ââ -->
+    <!-- ── 應收應付頁 ── -->
     <div class="page" id="page-ar-ap">
 
+      <!-- Step 1: 設定 -->
       <div class="card">
-        <div class="card-title">âï¸ Step 1 â è¨ç®è¨­å®</div>
+        <div class="card-title">⚙️ Step 1 — 計算設定</div>
         <div class="ar-config-grid">
           <div>
-            <label class="ar-form-label">çµç®æ¥ (Cutoff Date)</label>
+            <label class="ar-form-label">結算日 (Cutoff Date)</label>
             <input type="date" id="ar-cutoff" class="ar-input" value="2025-12-31">
-            <p class="ar-hint">é ä¼°è¡¨å¾çµç®æ¥æ¬¡æéå§</p>
+            <p class="ar-hint">預估表從結算日次月開始</p>
           </div>
           <div>
-            <label class="ar-form-label">æé¤è¨å®åºèï¼æ¯æä¸åï¼éèåéï¼</label>
+            <label class="ar-form-label">排除訂單序號（每月不同，逗號分隔）</label>
             <textarea id="ar-exclude" class="ar-textarea"
-              placeholder="ä¾ï¼81359, 99234">81359, 99234, 94366, 103938, 112111, 112112, 114967, 125387, 125388</textarea>
-            <p class="ar-hint">éäºåºèå°æçç¼ç¥¨ï¼è¨å®å°å®å¨æé¤</p>
+              placeholder="例：81359, 99234">81359, 99234, 94366, 103938, 112111, 112112, 114967, 125387, 125388</textarea>
+            <p class="ar-hint">這些序號對應的發票／訂單將完全排除</p>
           </div>
         </div>
       </div>
 
+      <!-- Step 2: 上傳 -->
       <div class="card">
-        <div class="card-title">ð Step 2 â ä¸å³äºä»½å ±è¡¨</div>
+        <div class="card-title">📂 Step 2 — 上傳五份報表</div>
         <div class="ar-files-grid">
+
           <div class="ar-file-area" id="ar-area-p1"
-            ondragover="arEv('p1',true,event)" ondragleave="arEv('p1',false,event)" ondrop="arDrop('p1',event)">
+               ondragover="arEv('p1',true,event)" ondragleave="arEv('p1',false,event)" ondrop="arDrop('p1',event)">
             <input type="file" accept=".xlsx,.xls,.csv" onchange="arPick('p1',event)">
             <span class="ar-part-tag" style="background:#3b6fe8">Part 1</span>
-            <div class="ar-file-icon">ð</div>
-            <div class="ar-file-desc">è¨å®æ¥æå<br>æªä»æ¬¾ä¹ç¼ç¥¨<br><em style="font-size:10px;color:#3b6fe8">å·¥ä½è¡¨ï¼Invoice</em></div>
+            <div class="ar-file-icon">📄</div>
+            <div class="ar-file-desc">訂單日期前<br>未付款之發票<br><em style="font-size:10px;color:#3b6fe8">工作表：Invoice</em></div>
             <div id="ar-stat-p1"></div>
             <div class="ar-file-name" id="ar-fname-p1"></div>
           </div>
+
           <div class="ar-file-area" id="ar-area-p2"
-            ondragover="arEv('p2',true,event)" ondragleave="arEv('p2',false,event)" ondrop="arDrop('p2',event)">
+               ondragover="arEv('p2',true,event)" ondragleave="arEv('p2',false,event)" ondrop="arDrop('p2',event)">
             <input type="file" accept=".xlsx,.xls,.csv" onchange="arPick('p2',event)">
             <span class="ar-part-tag" style="background:#059669">Part 2</span>
-            <div class="ar-file-icon">ð</div>
-            <div class="ar-file-desc">çµç®æ¥åæªä»<br>å·²æ¼æ¬¡æä»æ¬¾<br><em style="font-size:10px;color:#059669">å·¥ä½è¡¨ï¼Invoice</em></div>
+            <div class="ar-file-icon">📄</div>
+            <div class="ar-file-desc">結算日前未付<br>已於次月付款<br><em style="font-size:10px;color:#059669">工作表：Invoice</em></div>
             <div id="ar-stat-p2"></div>
             <div class="ar-file-name" id="ar-fname-p2"></div>
           </div>
+
           <div class="ar-file-area" id="ar-area-p3"
-            ondragover="arEv('p3',true,event)" ondragleave="arEv('p3',false,event)" ondrop="arDrop('p3',event)">
+               ondragover="arEv('p3',true,event)" ondragleave="arEv('p3',false,event)" ondrop="arDrop('p3',event)">
             <input type="file" accept=".xlsx,.xls,.csv" onchange="arPick('p3',event)">
             <span class="ar-part-tag" style="background:#d97706">Part 3</span>
-            <div class="ar-file-icon">ð</div>
-            <div class="ar-file-desc">çµç®æ¥<br>å·²æ¶æ¯ç¥¨ä¹ç¼ç¥¨<br><em style="font-size:10px;color:#d97706">å·¥ä½è¡¨ï¼Invoice</em></div>
+            <div class="ar-file-icon">📄</div>
+            <div class="ar-file-desc">結算日<br>已收支票之發票<br><em style="font-size:10px;color:#d97706">工作表：Invoice</em></div>
             <div id="ar-stat-p3"></div>
             <div class="ar-file-name" id="ar-fname-p3"></div>
           </div>
+
           <div class="ar-file-area" id="ar-area-p41"
-            ondragover="arEv('p41',true,event)" ondragleave="arEv('p41',false,event)" ondrop="arDrop('p41',event)">
+               ondragover="arEv('p41',true,event)" ondragleave="arEv('p41',false,event)" ondrop="arDrop('p41',event)">
             <input type="file" accept=".xlsx,.xls,.csv" onchange="arPick('p41',event)">
             <span class="ar-part-tag" style="background:#dc2626">Part 4-1</span>
-            <div class="ar-file-icon">ð</div>
-            <div class="ar-file-desc">æªå®æç¼ç¥¨éç«<br>è¨å®æç´° (ä¸)<br><em style="font-size:10px;color:#dc2626">å·¥ä½è¡¨ï¼è¨å®æç´°</em></div>
+            <div class="ar-file-icon">📄</div>
+            <div class="ar-file-desc">未完成發票開立<br>訂單明細 (一)<br><em style="font-size:10px;color:#dc2626">工作表：訂單明細</em></div>
             <div id="ar-stat-p41"></div>
             <div class="ar-file-name" id="ar-fname-p41"></div>
           </div>
+
           <div class="ar-file-area" id="ar-area-p42"
-            ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop="arDrop('p42',event)">
+               ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop="arDrop('p42',event)">
             <input type="file" accept=".xlsx,.xls,.csv" onchange="arPick('p42',event)">
             <span class="ar-part-tag" style="background:#9333ea">Part 4-2</span>
-            <div class="ar-file-icon">ð</div>
-            <div class="ar-file-desc">æªå®æç¼ç¥¨éç«<br>è¨å®æç´° (äº)<br><em style="font-size:10px;color:#9333ea">å·¥ä½è¡¨ï¼è¨å®æç´°</em></div>
+            <div class="ar-file-icon">📄</div>
+            <div class="ar-file-desc">未完成發票開立<br>訂單明細 (二)<br><em style="font-size:10px;color:#9333ea">工作表：訂單明細</em></div>
             <div id="ar-stat-p42"></div>
             <div class="ar-file-name" id="ar-fname-p42"></div>
           </div>
+
         </div>
       </div>
 
+      <!-- Step 3: 執行 -->
       <div class="card">
-        <div class="card-title">ð Step 3 â å·è¡è¨ç®</div>
+        <div class="card-title">🚀 Step 3 — 執行計算</div>
         <div class="btn-row" style="margin-top:0;">
-          <button class="btn btn-primary" id="ar-calc-btn" onclick="arCalculate()">ð éå§è¨ç®</button>
-          <button class="btn btn-secondary" onclick="arReset()">ð å¨é¨éç½®</button>
-          <div class="loading" id="ar-loading"><div class="spinner"></div> è¨ç®ä¸­ï¼è«ç¨åâ¦</div>
+          <button class="btn btn-primary" id="ar-calc-btn" onclick="arCalculate()">🚀 開始計算</button>
+          <button class="btn btn-secondary" onclick="arReset()">🔄 全部重置</button>
+          <div class="loading" id="ar-loading"><div class="spinner"></div> 計算中，請稍候…</div>
         </div>
         <div id="ar-status" class="ar-status"></div>
       </div>
 
+      <!-- 結果 -->
       <div id="ar-results" style="display:none;">
         <div class="card">
-          <div class="card-title">ð é ä¼°æ¶æ¬¾çµæ</div>
+          <div class="card-title">📊 預估收款結果</div>
           <div class="ar-summary-grid" id="ar-summary-grid"></div>
           <div class="ar-legend">
-            <span><span class="ar-legend-dot" style="background:#3b6fe8"></span>Part 1 ç¼ç¥¨æªä»</span>
-            <span><span class="ar-legend-dot" style="background:#059669"></span>Part 2 æ¬¡æå·²ä»</span>
-            <span><span class="ar-legend-dot" style="background:#d97706"></span>Part 3 å·²æ¶æ¯ç¥¨</span>
-            <span><span class="ar-legend-dot" style="background:#9333ea"></span>Part 4 æªéç«ç¼ç¥¨</span>
+            <span><span class="ar-legend-dot" style="background:#3b6fe8"></span>Part 1 發票未付</span>
+            <span><span class="ar-legend-dot" style="background:#059669"></span>Part 2 次月已付</span>
+            <span><span class="ar-legend-dot" style="background:#d97706"></span>Part 3 已收支票</span>
+            <span><span class="ar-legend-dot" style="background:#9333ea"></span>Part 4 未開立發票</span>
           </div>
           <div class="ar-table-wrap">
             <table class="ar-results-table" id="ar-results-table"></table>
           </div>
           <p style="font-size:11px;color:#a0aec0;text-align:center;margin-top:14px;">
-            éé¡å·²åæ¨äºå¥è³æ´æ¸ï¼æ°å°å¹£ TWDï¼ éé¡çºé¶ä»¥ãâãé¡¯ç¤º
+            金額已四捨五入至整數（新台幣 TWD）　金額為零以「—」顯示
           </p>
         </div>
       </div>
 
     </div><!-- /page-ar-ap -->
 
-    <!-- ââ æ¯é±éé³ä¸è¼é  ââ -->
-    <div class="page" id="page-recording">
-      <div class="card">
-        <div class="card-title">æ¯é±éé³ä¸è¼</div>
-        <div class="card-desc">
-          é¸ææ¥æåéï¼èªåä¸è¼ 8 ä½åä»ç 3CX éè©±éé³ï¼ä¸¦æ´çè³ Downloads / Claude å·¥ä½è³æå¤¾ã
-        </div>
-        <div class="rec-date-row">
-          <div class="rec-date-group">
-            <label>éå§æ¥æ</label>
-            <input type="date" id="rec-start" class="ar-input">
-          </div>
-          <div class="rec-date-group">
-            <label>çµææ¥æ</label>
-            <input type="date" id="rec-end" class="ar-input">
-          </div>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-rec" onclick="runRecordingDownload()">ð ä¸è¼æ¬é±éé³</button>
-        </div>
-        <div class="rec-status" id="rec-status"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">ð ä¸è¼èªªæ</div>
-        <div class="card-desc">
-          æä¸æéå¾ï¼æèªåè¤è£½ Claude æä»¤è³åªè²¼ç°¿ä¸¦éå Claude å°è©±è¦çªï¼è²¼ä¸å³å¯éå§å·è¡ã<br><br>
-          Claude æèªåï¼éå 3CX ä¸è¼éé³ â å»ºç«æ¥æè³æå¤¾ â ä¾ãå§å_æ¥æ_æµæ°´è.wavãæ´ç â æ¸é¤æ«å­æªã
-        </div>
-        <div class="rec-people">
-          <span class="rec-person">ð Vega</span>
-          <span class="rec-person">ð Celeste</span>
-          <span class="rec-person">ð Camelia</span>
-          <span class="rec-person">ð Lauren</span>
-          <span class="rec-person">ð Lawrence</span>
-          <span class="rec-person">ð Joanne</span>
-          <span class="rec-person">ð Stacy</span>
-          <span class="rec-person">ð Atlanta</span>
-        </div>
-      </div>
-    </div>
-
   </div><!-- /content -->
 </div><!-- /main -->
 
 <script>
-// ââââââââââââââââââââââââââââââââââââââââ
-// å±ç¨
-// ââââââââââââââââââââââââââââââââââââââââ
+// ════════════════════════════════════════
+// 共用
+// ════════════════════════════════════════
 document.getElementById('today-date').textContent =
   new Date().toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
 
 const pageMap = {
-  inventory: { pageId:'page-inventory', title:'ð¦ åº«å­éé¡è¨ç®', navId:'nav-inventory' },
-  email:     { pageId:'page-email',     title:'âï¸ æ´ç Email',   navId:'nav-email' },
-  slack:     { pageId:'page-slack',     title:'ð¬ æ´ç Slack',   navId:'nav-slack', onActivate: initSlackPage },
-  'ar-ap':   { pageId:'page-ar-ap',     title:'ð° ææ¶æä»è¨ç®', navId:'nav-ar' },
-  recording: { pageId:'page-recording', title:'ð æ¯é±éé³ä¸è¼', navId:'nav-recording' },
+  inventory: { pageId: 'page-inventory', title: '📦 庫存金額計算', navId: 'nav-inventory' },
+  email:     { pageId: 'page-email',     title: '✉️ 整理 Email',   navId: 'nav-email'     },
+  'ar-ap':   { pageId: 'page-ar-ap',     title: '💰 應收應付計算', navId: 'nav-ar'        },
 };
-
 function goTo(key) {
   const cfg = pageMap[key]; if (!cfg) return;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -678,14 +519,13 @@ function goTo(key) {
   document.getElementById(cfg.pageId).classList.add('active');
   document.getElementById('page-title').textContent = cfg.title;
   if (cfg.navId) document.getElementById(cfg.navId).classList.add('active');
-  if (cfg.onActivate) cfg.onActivate();
 }
 
-// ââââââââââââââââââââââââââââââââââââââââ
-// åº«å­è¨ç®
-// ââââââââââââââââââââââââââââââââââââââââ
+// ════════════════════════════════════════
+// 庫存計算
+// ════════════════════════════════════════
 const uploadArea = document.getElementById('upload-area');
-uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragover',  e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
 uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
 uploadArea.addEventListener('drop', e => {
   e.preventDefault(); uploadArea.classList.remove('dragover');
@@ -698,58 +538,58 @@ document.getElementById('file-input').addEventListener('change', e => {
 let workbook = null;
 function handleFile(file) {
   const ext = '.' + file.name.split('.').pop().toLowerCase();
-  if (!['.xlsx','.xls','.csv'].includes(ext)) { showError('è«ä¸å³ .xlsxã.xls æ .csv æ ¼å¼çæªæ¡ã'); return; }
+  if (!['.xlsx','.xls','.csv'].includes(ext)) { showError('請上傳 .xlsx、.xls 或 .csv 格式的檔案。'); return; }
   hideError();
   document.getElementById('file-name').style.display = 'block';
-  document.getElementById('file-name').textContent = 'â å·²é¸æï¼' + file.name;
+  document.getElementById('file-name').textContent = '✅ 已選擇：' + file.name;
   document.getElementById('calc-btn').disabled = false;
   document.getElementById('result-box').style.display = 'none';
   const reader = new FileReader();
   reader.onload = e => {
     try { workbook = XLSX.read(new Uint8Array(e.target.result), { type:'array' }); }
-    catch(err) { showError('è®åæªæ¡æç¼çé¯èª¤ï¼' + err.message); }
+    catch(err) { showError('讀取檔案時發生錯誤：' + err.message); }
   };
   reader.readAsArrayBuffer(file);
 }
 function calculate() {
   hideError();
-  if (!workbook) { showError('è«åä¸å³æªæ¡ã'); return; }
+  if (!workbook) { showError('請先上傳檔案。'); return; }
   document.getElementById('loading').style.display = 'flex';
   document.getElementById('calc-btn').disabled = true;
   setTimeout(() => {
     try {
-      const sheetName = workbook.SheetNames.find(n => n.includes('ç¾æåº«å­å ±è¡¨')) || workbook.SheetNames[0];
+      const sheetName = workbook.SheetNames.find(n => n.includes('現有庫存報表')) || workbook.SheetNames[0];
       const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval:'' });
-      if (!rows.length) { showError('å·¥ä½è¡¨å§æ²æè³æï¼è«ç¢ºèªæªæ¡æ ¼å¼ã'); return; }
+      if (!rows.length) { showError('工作表內沒有資料，請確認檔案格式。'); return; }
       let totalBuyout=0, totalTemp=0; const details=[];
       rows.forEach(row => {
-        const vendor=String(row['æ¡è³¼å» ååºè']||'').trim();
-        const rawPrice=parseFloat(row['å¹³åé²è²¨å¹'])||0;
-        const buyQty=parseFloat(row['è²·æ·åº«å­'])||0;
-        const tempQty=parseFloat(row['æ«æåº«å­(å¾åºè²¨åº«å­)'])||0;
+        const vendor=String(row['採購廠商序號']||'').trim();
+        const rawPrice=parseFloat(row['平均進貨價'])||0;
+        const buyQty=parseFloat(row['買斷庫存'])||0;
+        const tempQty=parseFloat(row['暫時庫存(待出貨庫存)'])||0;
         let adjPrice, adjLabel;
-        if(vendor==='VD0001152'){adjPrice=rawPrice*0.82;adjLabel='Ã0.82';}
-        else if(vendor==='VD0000096'){adjPrice=rawPrice*0.97;adjLabel='Ã0.97';}
-        else{adjPrice=rawPrice;adjLabel='â';}
+        if(vendor==='VD0001152'){adjPrice=rawPrice*0.82;adjLabel='×0.82';}
+        else if(vendor==='VD0000096'){adjPrice=rawPrice*0.97;adjLabel='×0.97';}
+        else{adjPrice=rawPrice;adjLabel='—';}
         totalBuyout+=buyQty*adjPrice; totalTemp+=tempQty>0?adjPrice*tempQty:0;
         details.push({vendor,rawPrice,adjPrice,adjLabel,buyQty,buyAmount:buyQty*adjPrice,tempQty,tempAmount:tempQty>0?adjPrice*tempQty:0});
       });
       document.getElementById('total-buyout').textContent=fmt(totalBuyout);
       document.getElementById('total-temp').textContent=fmt(totalTemp);
-      const adj=details.filter(d=>d.adjLabel!=='â').length;
-      document.getElementById('summary-row').innerHTML<`<span>å± ${rows.length} ç­è³æ</span><span>å¹æ ¼èª¿æ´ï¼${adj} ç­</span>`;
+      const adj=details.filter(d=>d.adjLabel!=='—').length;
+      document.getElementById('summary-row').innerHTML=`<span>共 ${rows.length} 筆資料</span><span>價格調整：${adj} 筆</span>`;
       const tbody=document.getElementById('detail-body'); tbody.innerHTML='';
       details.forEach(d=>{
-        const tr=document.createElement('tr'); const isAdj=d.adjLabel!=='â';
-        tr.innerHTML<`<td>${d.vendor||'ï¼æªå¡«ï¼'}</td><td>${fmt(d.rawPrice)}</td><td>${fmt(d.adjPrice)}</td>
-          <td><span class="tag ${isAdj?'tag-adjusted':'tag-normal'}">${isAdj?d.adjLabel:'æªèª¿æ´'}</span></td>
+        const tr=document.createElement('tr'); const isAdj=d.adjLabel!=='—';
+        tr.innerHTML=`<td>${d.vendor||'（未填）'}</td><td>${fmt(d.rawPrice)}</td><td>${fmt(d.adjPrice)}</td>
+          <td><span class="tag ${isAdj?'tag-adjusted':'tag-normal'}">${isAdj?d.adjLabel:'未調整'}</span></td>
           <td>${d.buyQty.toLocaleString()}</td><td>${fmt(d.buyAmount)}</td>
           <td>${d.tempQty.toLocaleString()}</td><td>${fmt(d.tempAmount)}</td>`;
         tbody.appendChild(tr);
       });
       document.getElementById('result-box').style.display='block';
       document.getElementById('result-box').scrollIntoView({behavior:'smooth',block:'start'});
-    } catch(err){ showError('è¨ç®æç¼çé¯èª¤ï¼'+err.message); }
+    } catch(err){ showError('計算時發生錯誤：'+err.message); }
     finally{ document.getElementById('loading').style.display='none'; document.getElementById('calc-btn').disabled=false; }
   },100);
 }
@@ -760,12 +600,12 @@ function reset(){
   document.getElementById('calc-btn').disabled=true;
   document.getElementById('result-box').style.display='none'; hideError();
 }
-function showError(msg){ const e=document.getElementById('error-msg'); e.textContent='â ï¸ '+msg; e.style.display='block'; document.getElementById('loading').style.display='none'; document.getElementById('calc-btn').disabled=false; }
+function showError(msg){ const e=document.getElementById('error-msg'); e.textContent='⚠️ '+msg; e.style.display='block'; document.getElementById('loading').style.display='none'; document.getElementById('calc-btn').disabled=false; }
 function hideError(){ document.getElementById('error-msg').style.display='none'; }
 
-// ââââââââââââââââââââââââââââââââââââââââ
+// ════════════════════════════════════════
 // Email
-// ââââââââââââââââââââââââââââââââââââââââ
+// ════════════════════════════════════════
 const GAS_URL='https://script.google.com/macros/s/AKfycbzVtM6JkxxtDWTLGzyftmMwhwH6xNaKjzaTfCSkBUyi4JtQytrWAXAGtDUQJPBJoPLL/exec';
 function runEmail(){
   document.getElementById('email-loading').style.display='flex';
@@ -775,49 +615,54 @@ function runEmail(){
   window[cb]=function(data){
     delete window[cb]; if(s.parentNode)s.parentNode.removeChild(s);
     document.getElementById('email-loading').style.display='none';
-    if(!data.success){ document.getElementById('email-error').textContent='â ï¸ GAS åå³é¯èª¤ï¼è«ç¨å¾åè©¦ã'; document.getElementById('email-error').style.display='block'; return; }
+    if(!data.success){ document.getElementById('email-error').textContent='⚠️ GAS 回傳錯誤，請稍後再試。'; document.getElementById('email-error').style.display='block'; return; }
     renderEmail(data);
   };
-  s.onerror=function(){ delete window[cb]; if(s.parentNode)s.parentNode.removeChild(s); document.getElementById('email-loading').style.display='none'; document.getElementById('email-error').textContent='â ï¸ å·è¡å¤±æï¼è«ç¢ºèª GAS å·²æ­£ç¢ºé¨ç½²ä¸æå­åæ¬éã'; document.getElementById('email-error').style.display='block'; };
+  s.onerror=function(){ delete window[cb]; if(s.parentNode)s.parentNode.removeChild(s); document.getElementById('email-loading').style.display='none'; document.getElementById('email-error').textContent='⚠️ 執行失敗，請確認 GAS 已正確部署且有存取權限。'; document.getElementById('email-error').style.display='block'; };
   s.src=GAS_URL+'?action=runEmail&callback='+cb; document.head.appendChild(s);
 }
 function renderEmail(data){
   document.getElementById('stat-reply').textContent=data.needReply.length;
   document.getElementById('stat-track').textContent=data.toTrack.length;
   document.getElementById('stat-marked').textContent=data.markedCount;
-  document.getElementById('email-fetch-time').textContent='è³ææ·åæéï¼'+data.fetchedAt+' å±æ¶å° '+data.total+' å°';
-  renderEmailSection('section-reply','éè¦åè¦',data.needReply,'reply-hdr','ð´');
-  renderEmailSection('section-track','å¾è¾¦è¿½è¹¤',data.toTrack,'track-hdr','ð¡');
-  renderEmailSection('section-ref','åèè³è¨',data.reference,'ref-hdr','âª');
+  document.getElementById('email-fetch-time').textContent='資料擷取時間：'+data.fetchedAt+' 共收到 '+data.total+' 封';
+  renderEmailSection('section-reply','需要回覆',data.needReply,'reply-hdr','🔴');
+  renderEmailSection('section-track','待辦追蹤',data.toTrack,'track-hdr','🟡');
+  renderEmailSection('section-ref','參考資訊',data.reference,'ref-hdr','⚪');
   document.getElementById('email-result-box').style.display='block';
   document.getElementById('email-result-box').scrollIntoView({behavior:'smooth'});
 }
 function renderEmailSection(id,title,items,hdr,dot){
   const c=document.getElementById(id); if(!items.length){c.innerHTML='';return;}
-  let h=`<div class="email-section-header ${hdr}">${dot} ${title}<span class="count-badge">${items.length} å°</span></div><div class="email-list">`;
+  let h=`<div class="email-section-header ${hdr}">${dot} ${title}<span class="count-badge">${items.length} 封</span></div><div class="email-list">`;
   items.forEach(i=>{ const tag=i.tag==='lockincenter'?'<span class="email-tag">lockincenter</span>':'';
     h+=`<div class="email-item"><div class="email-item-top"><span class="email-from">${esc(i.from)}${tag}</span><span class="email-date">${esc(i.date)}</span></div><div class="email-subject">${esc(i.subject)}</div><div class="email-snippet">${esc(i.snippet)}</div></div>`; });
   c.innerHTML=h+'</div>';
 }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// ââââââââââââââââââââââââââââââââââââââââ
-// ææ¶å¸³æ¬¾è¨ç®
-// ââââââââââââââââââââââââââââââââââââââââ
+// ════════════════════════════════════════
+// 應收帳款計算
+// ════════════════════════════════════════
 const arFiles = { p1:null, p2:null, p3:null, p41:null, p42:null };
+
 const AR_SHEET_HINTS = {
   p1:['Invoice','invoice'], p2:['Invoice','invoice'], p3:['Invoice','invoice'],
-  p41:['è¨å®æç´°','Sheet1'], p42:['è¨å®æç´°','Sheet1'],
+  p41:['訂單明細','Sheet1'], p42:['訂單明細','Sheet1'],
 };
+
+// 拖曳
 function arEv(k,on,e){ e.preventDefault(); document.getElementById('ar-area-'+k).classList.toggle('dragover',on); }
 function arDrop(k,e){ e.preventDefault(); arEv(k,false,e); if(e.dataTransfer.files[0]) arStore(k,e.dataTransfer.files[0]); }
 function arPick(k,e){ if(e.target.files[0]) arStore(k,e.target.files[0]); }
 function arStore(k,f){
   arFiles[k]=f;
-  document.getElementById('ar-stat-'+k).textContent='â';
+  document.getElementById('ar-stat-'+k).textContent='✅';
   document.getElementById('ar-fname-'+k).textContent=f.name;
   document.getElementById('ar-area-'+k).classList.add('ready');
 }
+
+// 讀檔
 function arReadFile(key){
   return new Promise((ok,fail)=>{
     const r=new FileReader();
@@ -832,6 +677,8 @@ function arReadFile(key){
     r.onerror=fail; r.readAsArrayBuffer(arFiles[key]);
   });
 }
+
+// Period 工具
 function arYM(y,m){ return `${y}-${String(m).padStart(2,'0')}`; }
 function arAddMo(s,n){ let[y,m]=s.split('-').map(Number); m+=n; while(m>12){m-=12;y++;} while(m<1){m+=12;y--;} return arYM(y,m); }
 function arDateToYM(d){ if(!d||isNaN(d))return null; return arYM(d.getFullYear(),d.getMonth()+1); }
@@ -845,109 +692,136 @@ function arParseDate(v){
 function arParseNum(v){ if(typeof v==='number')return isNaN(v)?0:v; if(!v)return 0; const n=parseFloat(String(v).replace(/,/g,'')); return isNaN(n)?0:n; }
 function arCol(row,...names){ for(const n of names){ if(row[n]!==undefined&&row[n]!==null)return row[n]; const k=Object.keys(row).find(k=>k.trim()===n.trim()); if(k!==undefined)return row[k]; } return null; }
 function arExcluded(val,excSet){ if(!val&&val!==0)return false; return String(val).split(',').map(s=>s.trim()).some(s=>excSet.has(s)); }
+
+// 主計算
 async function arCalculate(){
   const btn=document.getElementById('ar-calc-btn');
   btn.disabled=true;
   document.getElementById('ar-loading').style.display='flex';
+
   const cutInput=document.getElementById('ar-cutoff').value;
-  if(!cutInput){ arStatus('error','â è«è¼¸å¥çµç®æ¥'); btn.disabled=false; document.getElementById('ar-loading').style.display='none'; return; }
+  if(!cutInput){ arStatus('error','❌ 請輸入結算日'); btn.disabled=false; document.getElementById('ar-loading').style.display='none'; return; }
+
   const cutoff=new Date(cutInput+'T23:59:59.999');
   const cutYM=arYM(cutoff.getFullYear(),cutoff.getMonth()+1);
   const startYM=arAddMo(cutYM,1);
+
   const excSet=new Set(document.getElementById('ar-exclude').value.split(/[,\n\r]/).map(s=>s.trim()).filter(Boolean));
+
   const miss=Object.entries(arFiles).filter(([,v])=>!v).map(([k])=>k);
-  if(miss.length){ arStatus('error','â ç¼ºå°æªæ¡ï¼'+miss.join('ã')); btn.disabled=false; document.getElementById('ar-loading').style.display='none'; return; }
-  arStatus('info','â³ æ­£å¨è§£ææªæ¡ä¸¦è¨ç®ä¸­ï¼è«ç¨åâ¦');
+  if(miss.length){ arStatus('error','❌ 缺少檔案：'+miss.join('、')); btn.disabled=false; document.getElementById('ar-loading').style.display='none'; return; }
+
+  arStatus('info','⏳ 正在解析檔案並計算中，請稍候…');
+
   try{
     const PERIODS=20;
     const df={};
     for(let i=0;i<PERIODS;i++){ const p=arAddMo(startYM,i); df[p]={P1:0,P2:0,P3:0,P4:0}; }
     const add=(part,ym,val)=>{ if(df[ym])df[ym][part]+=val; };
+
+    // Part 1
     const d1=await arReadFile('p1');
     let p1Past=0;
     for(const row of d1){
-      if(arExcluded(arCol(row,'å°æè¨å®åºè'),excSet))continue;
-      const inv=arParseDate(arCol(row,'ç¼ç¥¨æ¥æ'));
+      if(arExcluded(arCol(row,'對應訂單序號'),excSet))continue;
+      const inv=arParseDate(arCol(row,'發票日期'));
       if(!inv||inv<new Date('2022-01-01'))continue;
-      const amt=arParseNum(arCol(row,'ç¼ç¥¨éé¡')); if(!amt)continue;
-      const due=arParseDate(arCol(row,'ææä»æ¬¾æé'));
+      const amt=arParseNum(arCol(row,'發票金額')); if(!amt)continue;
+      const due=arParseDate(arCol(row,'最晚付款時間'));
       if(due&&due>cutoff){ add('P1',arDateToYM(due),amt); } else { p1Past+=amt; }
     }
     const p1Mo=p1Past/12, p1Start=arAddMo(startYM,5);
     for(let i=0;i<12;i++) add('P1',arAddMo(p1Start,i),p1Mo);
+
+    // Part 2
     const d2=await arReadFile('p2');
     let p2Total=0;
     for(const row of d2){
-      if(arExcluded(arCol(row,'å°æè¨å®åºè'),excSet))continue;
-      p2Total+=arParseNum(arCol(row,'ç¼ç¥¨éé¡'));
+      if(arExcluded(arCol(row,'對應訂單序號'),excSet))continue;
+      p2Total+=arParseNum(arCol(row,'發票金額'));
     }
     add('P2',startYM,p2Total);
+
+    // Part 3
     const d3=await arReadFile('p3');
     let p3Past=0;
     for(const row of d3){
-      if(arExcluded(arCol(row,'å°æè¨å®åºè'),excSet))continue;
-      const amt=arParseNum(arCol(row,'ç¼ç¥¨éé¡')); if(!amt)continue;
-      const due=arParseDate(arCol(row,'ææä»æ¬¾æé'));
+      if(arExcluded(arCol(row,'對應訂單序號'),excSet))continue;
+      const amt=arParseNum(arCol(row,'發票金額')); if(!amt)continue;
+      const due=arParseDate(arCol(row,'最晚付款時間'));
       if(due&&due>cutoff){ add('P3',arDateToYM(due),amt); } else { p3Past+=amt; }
     }
     add('P3',arAddMo(startYM,3),p3Past);
+
+    // Part 4
     const d41=await arReadFile('p41'), d42=await arReadFile('p42');
     let p4Uninv=0;
     for(const row of [...d41,...d42]){
       if(excSet.has(String(arCol(row,'ID')||'').trim()))continue;
-      p4Uninv+=(arParseNum(arCol(row,'ç¼ç¥¨éé¡'))-arParseNum(arCol(row,'å·²éç«ç¼ç¥¨éé¡')));
+      p4Uninv+=(arParseNum(arCol(row,'發票金額'))-arParseNum(arCol(row,'已開立發票金額')));
     }
     const p4Mo=p4Uninv/12;
     for(let i=0;i<12;i++) add('P4',arAddMo(startYM,i),p4Mo);
+
+    // 整理顯示資料
     const rows=[];
     for(let i=0;i<PERIODS;i++){
       const p=arAddMo(startYM,i), r=df[p];
       const total=r.P1+r.P2+r.P3+r.P4;
       if(Math.abs(total)>0.01) rows.push({period:p,...r,Total:total});
     }
+
     arRenderResults(rows,startYM,{p1Past,p1Mo,p2Total,p3Past,p4Uninv,p4Mo});
-    arStatus('success','â è¨ç®å®æï¼å± '+rows.length+' åæä»½æè³æ');
+    arStatus('success','✅ 計算完成！共 '+rows.length+' 個月份有資料');
     document.getElementById('ar-results').style.display='block';
     document.getElementById('ar-results').scrollIntoView({behavior:'smooth',block:'start'});
+
   }catch(ex){
     console.error(ex);
-    arStatus('error','â è¨ç®é¯èª¤ï¼'+ex.message+'ï¼è«ç¢ºèªæ¬ä½åç¨±ï¼');
+    arStatus('error','❌ 計算錯誤：'+ex.message+'（請確認欄位名稱）');
   }
+
   btn.disabled=false;
   document.getElementById('ar-loading').style.display='none';
 }
+
 function arRenderResults(rows,startYM,meta){
   const grandTotal=rows.reduce((s,r)=>s+r.Total,0);
   const maxRow=rows.reduce((a,b)=>b.Total>a.Total?b:a,rows[0]);
+
   document.getElementById('ar-summary-grid').innerHTML=`
-    <div class="ar-summary-card"><div class="sl">é ä¼°ç¸½æ¶æ¬¾</div><div class="sv">${arFmt(grandTotal)}</div><div class="ss">æ°å°å¹£ TWD</div></div>
-    <div class="ar-summary-card"><div class="sl">æé«æ¶æ¬¾æä»½</div><div class="sv">${maxRow?.period??'-'}</div><div class="ss">${maxRow?arFmt(maxRow.Total):'-'}</div></div>
-    <div class="ar-summary-card"><div class="sl">Part 1 æåæ¤æ</div><div class="sv">${arFmt(meta.p1Mo)}</div><div class="ss">æ­·å²é¾æ ${arFmt(meta.p1Past)}</div></div>
-    <div class="ar-summary-card"><div class="sl">Part 2 æ¬¡æå¥å¸³</div><div class="sv">${arFmt(meta.p2Total)}</div><div class="ss">èªåæ¼ ${startYM}</div></div>
-    <div class="ar-summary-card"><div class="sl">Part 4 æåæ¤æ</div><div class="sv">${arFmt(meta.p4Mo)}</div><div class="ss">æªéç« ${arFmt(meta.p4Uninv)}</div></div>`;
+    <div class="ar-summary-card"><div class="sl">預估總收款</div><div class="sv">${arFmt(grandTotal)}</div><div class="ss">新台幣 TWD</div></div>
+    <div class="ar-summary-card"><div class="sl">最高收款月份</div><div class="sv">${maxRow?.period??'-'}</div><div class="ss">${maxRow?arFmt(maxRow.Total):'-'}</div></div>
+    <div class="ar-summary-card"><div class="sl">Part 1 月均攤提</div><div class="sv">${arFmt(meta.p1Mo)}</div><div class="ss">歷史逾期 ${arFmt(meta.p1Past)}</div></div>
+    <div class="ar-summary-card"><div class="sl">Part 2 次月入帳</div><div class="sv">${arFmt(meta.p2Total)}</div><div class="ss">認列於 ${startYM}</div></div>
+    <div class="ar-summary-card"><div class="sl">Part 4 月均攤提</div><div class="sv">${arFmt(meta.p4Mo)}</div><div class="ss">未開立 ${arFmt(meta.p4Uninv)}</div></div>`;
+
   const parts=[
-    {k:'P1',label:'Part 1 ç¼ç¥¨æªä»',cls:''},
-    {k:'P2',label:'Part 2 æ¬¡æå·²ä»',cls:''},
-    {k:'P3',label:'Part 3 å·²æ¶æ¯ç¥¨',cls:''},
-    {k:'P4',label:'Part 4 æªéç«ç¼ç¥¨',cls:''},
-    {k:'Total',label:'ð ç¶æé ä¼°æ¶æ¬¾ç¸½é¡',cls:'ar-total-row'},
+    {k:'P1',label:'Part 1　發票未付',cls:''},
+    {k:'P2',label:'Part 2　次月已付',cls:''},
+    {k:'P3',label:'Part 3　已收支票',cls:''},
+    {k:'P4',label:'Part 4　未開立發票',cls:''},
+    {k:'Total',label:'📊 當月預估收款總額',cls:'ar-total-row'},
   ];
-  let html='<thead><tr><th>é ç® â² æä»½</th>';
+  let html='<thead><tr><th>項目 ╲ 月份</th>';
   rows.forEach(r=>html+=`<th>${r.period}</th>`);
   html+='</tr></thead><tbody>';
   parts.forEach(p=>{
     html+=`<tr class="${p.cls}"><td>${p.label}</td>`;
-    rows.forEach(r=>{ const v=Math.round(r[p.k]); html+=`<td class="${v===0?'ar-val-zero':''}">${v===0?'â':v.toLocaleString('zh-TW')}</td>`; });
+    rows.forEach(r=>{ const v=Math.round(r[p.k]); html+=`<td class="${v===0?'ar-val-zero':''}">${v===0?'—':v.toLocaleString('zh-TW')}</td>`; });
     html+='</tr>';
   });
   html+='</tbody>';
   document.getElementById('ar-results-table').innerHTML=html;
 }
+
 function arFmt(n){ return Math.round(n).toLocaleString('zh-TW'); }
+
 function arStatus(type,msg){
   const el=document.getElementById('ar-status');
   el.className='ar-status '+type; el.textContent=msg; el.style.display='block';
 }
+
 function arReset(){
   Object.keys(arFiles).forEach(k=>{
     arFiles[k]=null;
@@ -960,313 +834,6 @@ function arReset(){
   document.getElementById('ar-calc-btn').disabled=false;
   document.getElementById('ar-loading').style.display='none';
 }
-
-// ââââââââââââââââââââââââââââââââââââââââ
-// æ¯é±éé³ä¸è¼
-// ââââââââââââââââââââââââââââââââââââââââ
-function runRecordingDownload() {
-  var startVal = document.getElementById('rec-start').value;
-  var endVal = document.getElementById('rec-end').value;
-  if (!startVal || !endVal) { setRecStatus('error', 'â è«åé¸æéå§åçµææ¥æã'); return; }
-  var s = new Date(startVal + 'T00:00:00');
-  var e = new Date(endVal + 'T00:00:00');
-  var startStr = (s.getMonth()+1) + '/' + s.getDate();
-  var endStr = (e.getMonth()+1) + '/' + e.getDate();
-  var prompt = 'å¹«æç¨Skill ä¸è¼ ' + startStr + '-' + endStr + ' çéé³';
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(prompt).then(function() {
-      setRecStatus('success', 'â å·²è¤è£½æä»¤å°åªè²¼ç°¿ï¼æ­£å¨éå Claudeâ¦<br><small>æä»¤ï¼<strong>' + prompt + '</strong></small>');
-    }).catch(function() {
-      setRecStatus('success', 'ð è«è¤è£½æ­¤æä»¤è²¼å° Claudeï¼<br><strong>' + prompt + '</strong>');
-    });
-  } else {
-    setRecStatus('success', 'ð è«è¤è£½æ­¤æä»¤è²¼å° Claudeï¼<br><strong>' + prompt + '</strong>');
-  }
-  setTimeout(function() { window.open('https://claude.ai', '_blank'); }, 600);
-}
-function setRecStatus(type, html) {
-  var el = document.getElementById('rec-status');
-  el.className = 'rec-status ' + type; el.innerHTML = html;
-}
-(function initRecDates() {
-  var today = new Date();
-  var day = today.getDay();
-  var mon = new Date(today);
-  mon.setDate(today.getDate() - (day === 0 ? 6 : day - 1));
-  var fri = new Date(mon); fri.setDate(mon.getDate() + 4);
-  function fmt(d) {
-    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-  }
-  document.getElementById('rec-start').value = fmt(mon);
-  document.getElementById('rec-end').value = fmt(fri);
-})();
-
-// ââââââââââââââââââââââââââââââââââââââââ
-// Slack æ´å
-// ââââââââââââââââââââââââââââââââââââââââ
-const SLACK_API = 'https://slack.com/api/';
-
-// å¼å« Slack APIï¼GETï¼
-async function slackGet(method, params) {
-  const token = localStorage.getItem('slack_token');
-  if (!token) throw new Error('no_token');
-  const url = new URL(SLACK_API + method);
-  if (params) Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)));
-  const res = await fetch(url.toString(), {
-    headers: { 'Authorization': 'Bearer ' + token }
-  });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const data = await res.json();
-  if (!data.ok) throw new Error(data.error || 'slack_api_error');
-  return data;
-}
-
-// åå§å Slack é ï¼åææå¼å«ï¼
-function initSlackPage() {
-  const token = localStorage.getItem('slack_token');
-  const setupCard = document.getElementById('slack-setup-card');
-  const mainCard  = document.getElementById('slack-main-card');
-  if (token) {
-    setupCard.style.display = 'none';
-    mainCard.style.display  = 'block';
-    const name = localStorage.getItem('slack_user_name');
-    const id   = localStorage.getItem('slack_user_id');
-    const team = localStorage.getItem('slack_team') || '';
-    document.getElementById('slack-user-badge').innerHTML =
-      `<span class="slack-connected-badge">â ${esc(name || '')}${team ? ' ï¼ ' + esc(team) : ''} <span style="opacity:.7;font-weight:400">(${esc(id || '')})</span></span>`;
-  } else {
-    setupCard.style.display = 'block';
-    mainCard.style.display  = 'none';
-  }
-}
-
-// å²å­ä¸¦é©è­ Token
-async function saveSlackToken() {
-  const input  = document.getElementById('slack-token-input');
-  const status = document.getElementById('slack-setup-status');
-  const token  = input.value.trim();
-  if (!token) {
-    status.className = 'slack-setup-status err';
-    status.textContent = 'â ï¸ è«è¼¸å¥ Token';
-    return;
-  }
-  status.className = 'slack-setup-status info';
-  status.textContent = 'â³ é©è­ä¸­...';
-  localStorage.setItem('slack_token', token);
-  try {
-    const auth = await slackGet('auth.test');
-    localStorage.setItem('slack_user_id',   auth.user_id);
-    localStorage.setItem('slack_user_name', auth.user);
-    localStorage.setItem('slack_team',      auth.team || '');
-    status.className = 'slack-setup-status ok';
-    status.textContent = `â é©è­æåï¼å¸³èï¼${auth.user}ï¼${auth.team || ''}ï¼Token å·²å²å­è³çè¦½å¨ã`;
-    input.value = '';
-    setTimeout(() => initSlackPage(), 1200);
-  } catch(e) {
-    localStorage.removeItem('slack_token');
-    status.className = 'slack-setup-status err';
-    status.textContent = 'â é©è­å¤±æï¼' + e.message + 'ãè«ç¢ºèª Token æ­£ç¢ºä¸å·²å®è£ App è³ Workspaceã';
-  }
-}
-
-// éè¨­ Token
-function resetSlackToken() {
-  if (!confirm('ç¢ºå®è¦æ¸é¤å·²å²å­ç Slack Tokenï¼')) return;
-  ['slack_token','slack_user_id','slack_user_name','slack_team'].forEach(k => localStorage.removeItem(k));
-  document.getElementById('slack-result-box').style.display = 'none';
-  document.getElementById('slack-token-input').value = '';
-  document.getElementById('slack-setup-status').className = 'slack-setup-status';
-  document.getElementById('slack-setup-status').textContent = '';
-  initSlackPage();
-}
-
-// ä¸»å½å¼ï¼æå Slack è³æ
-async function runSlack() {
-  const userId = localStorage.getItem('slack_user_id');
-  if (!userId) { initSlackPage(); return; }
-
-  const loadingEl = document.getElementById('slack-loading');
-  const loadingTxt = document.getElementById('slack-loading-text');
-  const errEl = document.getElementById('slack-error');
-  loadingEl.style.display = 'flex';
-  errEl.style.display = 'none';
-  document.getElementById('slack-result-box').style.display = 'none';
-
-  try {
-    // ä»å¤©èµ·å§æéæ³ï¼Unix secondsï¼
-    const now = new Date();
-    const todayStart = Math.floor(new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000);
-
-    // æ¨å¤©æ¥æå­ä¸²ï¼Slack search: after:YYYY-MM-DD è¡¨ç¤ºå¾è©²æ¥ä¹å¾ï¼
-    const yest = new Date(now); yest.setDate(yest.getDate() - 1);
-    const afterDate = `${yest.getFullYear()}-${String(yest.getMonth()+1).padStart(2,'0')}-${String(yest.getDate()).padStart(2,'0')}`;
-
-    // ââ 1. æå°ä»å¤©ææ @mentions ââ
-    loadingTxt.textContent = 'æå° @mentions ä¸­...';
-    let channelMentions = [], threadMentions = [];
-    try {
-      const sr = await slackGet('search.messages', {
-        query:    `<@${userId}> after:${afterDate}`,
-        count:    100,
-        sort:     'timestamp',
-        sort_dir: 'desc'
-      });
-      const matches = (sr.messages?.matches || []).filter(m => parseFloat(m.ts) >= todayStart);
-      // ååé »éè¨æ¯ vs Thread åè¦
-      channelMentions = matches.filter(m => !m.thread_ts || m.thread_ts === m.ts);
-      threadMentions  = matches.filter(m => m.thread_ts  && m.thread_ts !== m.ts);
-    } catch(e) {
-      console.warn('[Slack] search.messages failed:', e.message);
-      // è¥ search:read scope æªææ¬ï¼é¡¯ç¤ºæç¤ºä½ç¹¼çºå·è¡
-    }
-
-    // ââ 2. æåä»å¤©ç DM ââ
-    loadingTxt.textContent = 'æåç§è¨ DM ä¸­...';
-    let dmMessages = [];
-    try {
-      const imList = await slackGet('conversations.list', {
-        types: 'im', limit: 100, exclude_archived: true
-      });
-      // åªæä»å¤©ææ´»åç DM
-      const activeIMs = (imList.channels || []).filter(c => {
-        const ts = c.latest ? parseFloat(c.latest.ts || 0) : 0;
-        return ts >= todayStart;
-      });
-
-      // ä¸¦è¡æåï¼æå¤ 15 å DMï¼é¿å rate limitï¼
-      const toFetch = activeIMs.slice(0, 15);
-      const results = await Promise.all(toFetch.map(im =>
-        slackGet('conversations.history', {
-          channel: im.id,
-          oldest:  String(todayStart),
-          limit:   30
-        }).then(h => ({ im, messages: h.messages || [] }))
-          .catch(() => ({ im, messages: [] }))
-      ));
-
-      for (const { im, messages } of results) {
-        for (const msg of messages) {
-          // è·³éèªå·±ç¼çè¨æ¯ãç³»çµ±è¨æ¯ãsubtype è¨æ¯
-          if (msg.subtype || msg.user === userId) continue;
-          dmMessages.push({ ...msg, _imId: im.id, _imUser: im.user });
-        }
-      }
-    } catch(e) {
-      console.warn('[Slack] DM fetch failed:', e.message);
-    }
-
-    // ââ 3. æå DM ç¼ä»¶äººåç¨± ââ
-    loadingTxt.textContent = 'è§£æä½¿ç¨èåç¨±ä¸­...';
-    const userCache = {};
-    const getUser = async (uid) => {
-      if (!uid) return 'æªç¥';
-      if (uid === 'USLACKBOT') return 'Slackbot';
-      if (userCache[uid]) return userCache[uid];
-      try {
-        const u = await slackGet('users.info', { user: uid });
-        userCache[uid] = u.user?.real_name || u.user?.name || uid;
-      } catch(e) { userCache[uid] = uid; }
-      return userCache[uid];
-    };
-    await Promise.all(dmMessages.map(async m => {
-      m._userName = await getUser(m._imUser || m.user);
-    }));
-
-    // ââ 4. æ¸²æçµæ ââ
-    renderSlackResults({ channelMentions, threadMentions, dmMessages, todayStart });
-
-  } catch(e) {
-    errEl.textContent = 'â ï¸ ç¼çé¯èª¤ï¼' + e.message;
-    errEl.style.display = 'block';
-    console.error('[Slack]', e);
-  } finally {
-    loadingEl.style.display = 'none';
-    loadingTxt.textContent = 'æåä¸­ï¼ç´é 15-30 ç§...';
-  }
-}
-
-// æ¸²æ Slack çµæ
-function renderSlackResults({ channelMentions, threadMentions, dmMessages }) {
-  const time = new Date().toLocaleString('zh-TW', { hour:'2-digit', minute:'2-digit' });
-  const total = channelMentions.length + threadMentions.length;
-  document.getElementById('slack-fetch-time').textContent =
-    `æ´çæéï¼${time}ã ä»æ¥ @mentions ï¼${total} åã DMï¼${dmMessages.length} å`;
-  document.getElementById('slack-stat-mentions').textContent = channelMentions.length;
-  document.getElementById('slack-stat-dms').textContent      = dmMessages.length;
-  document.getElementById('slack-stat-threads').textContent  = threadMentions.length;
-
-  // é »é @mentions
-  renderSlackSection('slack-section-mentions', 'ð´ é »é @mentions', channelMentions, 'reply-hdr', m => {
-    const ch   = m.channel?.name ? '#' + m.channel.name : (typeof m.channel === 'string' ? m.channel : 'æªç¾¥é »é');
-    const who  = m.username || m.user || '';
-    const text = slackCleanText(m.text || '');
-    return { from: ch, who, text, time: slackTs(m.ts), link: m.permalink };
-  });
-
-  // Thread @mentions
-  renderSlackSection('slack-section-threads', 'ð§µ Thread @mentions', threadMentions, 'slack-hdr', m => {
-    const ch   = m.channel?.name ? '#' + m.channel.name : (typeof m.channel === 'string' ? m.channel : '');
-    const who  = m.username || m.user || '';
-    const text = slackCleanText(m.text || '');
-    return { from: ch, who, text, time: slackTs(m.ts), link: m.permalink };
-  });
-
-  // DM ç§è¨
-  renderSlackSection('slack-section-dms', 'ð¬ ç§è¨ (DM)', dmMessages, 'track-hdr', m => {
-    const text = slackCleanText(m.text || '');
-    return { from: m._userName || m.user || 'æªç¾¥', who: '', text, time: slackTs(m.ts), link: null };
-  });
-
-  document.getElementById('slack-result-box').style.display = 'block';
-  document.getElementById('slack-result-box').scrollIntoView({ behavior: 'smooth' });
-}
-
-// æ¸²æå®ä¸ Section
-function renderSlackSection(elId, title, items, hdrClass, mapper) {
-  const el = document.getElementById(elId);
-  if (!items || !items.length) { el.innerHTML = ''; return; }
-  let h = `<div class="email-section-header ${hdrClass}">${title}<span class="count-badge">${items.length} å</span></div><div class="email-list">`;
-  items.forEach(item => {
-    const m = mapper(item);
-    const linkHtml = m.link
-      ? `<a class="slack-msg-link" href="${m.link}" target="_blank" rel="noopener">â éå</a>`
-      : '';
-    const textSnippet = (m.text || '').substring(0, 220) + (m.text && m.text.length > 220 ? 'â¦' : '');
-    h += `<div class="email-item">
-      <div class="email-item-top">
-        <span class="email-from">${esc(m.from)}${linkHtml}</span>
-        <span class="email-date">${m.time}</span>
-      </div>
-      ${m.who ? `<div class="email-subject" style="color:#6b7280;font-size:11px;">by ${esc(m.who)}</div>` : ''}
-      <div class="email-snippet">${esc(textSnippet)}</div>
-    </div>`;
-  });
-  el.innerHTML = h + '</div>';
-}
-
-// å·¥å·ï¼Nlack æéæ³ â æ>å
-function slackTs(ts) {
-  if (!ts) return '';
-  return new Date(parseFloat(ts) * 1000).toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit' });
-}
-
-// å·¥å·ï¼è®ç Slack mrkdwn(ç§»é¤ <@U...>ã<#C...>ã<http...> ç­æ¨è¨ï¼
-function slackCleanText(text) {
-  return text
-    .replace(/<@[UW][A-Z0-9]+(?:\|[^>]+)?>/g, (m) => {
-      const label = m.match(/\|([^>]+)>/);
-      return label ? '@' + label[1] : '@user';
-    })
-    .replace(/<#[C][A-Z0-9]+\|([^>]+)>/g, '#$1')
-    .replace(/<(https?:[^|>]+)\|([^>]+)>/g, '$2')
-    .replace(/<(https?:[^>]+)>/g, '$1')
-    .replace(/<!channel>/g, '@channel')
-    .replace(/<!here>/g, '@here')
-    .replace(/<!everyone>/g, '@everyone')
-    .replace(/\n+/g, ' ')
-    .trim();
-}
-
 </script>
 </body>
 </html>
