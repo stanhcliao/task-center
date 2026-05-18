@@ -4,100 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Stan 的任務中心</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
-// ════════════════════════════════════════
-// GitHub Actions 直接觸發
-// ════════════════════════════════════════
-const GH_REPO = 'stanhcliao/finance-automation';
-const TOKEN_KEY = 'gh_actions_token';
-
-function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
-function setToken(t) { if(t) localStorage.setItem(TOKEN_KEY, t.trim()); else localStorage.removeItem(TOKEN_KEY); }
-
-function showTokenModal(cb) {
-  document.getElementById('token-modal').classList.add('show');
-  const inp = document.getElementById('token-input');
-  inp.value = getToken();
-  inp.type = 'password';
-  window._tokenCb = cb || null;
-  setTimeout(() => inp.focus(), 100);
-}
-function closeTokenModal() {
-  document.getElementById('token-modal').classList.remove('show');
-  window._tokenCb = null;
-}
-function saveToken() {
-  const t = document.getElementById('token-input').value.trim();
-  if (!t) { document.getElementById('token-input').style.borderColor='#c53030'; return; }
-  setToken(t);
-  closeTokenModal();
-  if (window._tokenCb) { const cb=window._tokenCb; window._tokenCb=null; cb(); }
-}
-// Close modal on overlay click
-document.addEventListener('click', e => {
-  if (e.target.id === 'token-modal') closeTokenModal();
-});
-
-async function runWorkflow(btn, workflow) {
-  const token = getToken();
-  if (!token) {
-    showTokenModal(() => runWorkflow(btn, workflow));
-    return;
-  }
-
-  const card = btn.closest('.finance-task-card');
-  const statusEl = card.querySelector('.ftc-status');
-  const origHTML = btn.innerHTML;
-
-  btn.disabled = true;
-  btn.innerHTML = '⏳ 送出中...';
-  statusEl.className = 'ftc-status running';
-  statusEl.textContent = '⏳ 正在觸發 GitHub Actions...';
-
-  try {
-    const resp = await fetch(
-      `https://api.github.com/repos/${GH_REPO}/actions/workflows/${workflow}/dispatches`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ref: 'main' })
-      }
-    );
-
-    if (resp.status === 204) {
-      statusEl.className = 'ftc-status success';
-      statusEl.textContent = '✅ 已觸發！請到 GitHub Actions 查看進度 → 完成後下載 Artifacts';
-      btn.innerHTML = '✅ 已送出';
-      btn.style.cssText = 'background:#f0fdf4;color:#059669;border-color:#a7f3d0;cursor:default';
-      setTimeout(() => {
-        btn.disabled = false;
-        btn.innerHTML = origHTML;
-        btn.style.cssText = '';
-      }, 8000);
-    } else if (resp.status === 401 || resp.status === 403) {
-      setToken('');
-      statusEl.className = 'ftc-status error';
-      statusEl.textContent = '❌ Token 無效或過期，請重新設定';
-      btn.disabled = false; btn.innerHTML = origHTML;
-      showTokenModal(() => runWorkflow(btn, workflow));
-    } else {
-      const body = await resp.json().catch(() => ({}));
-      statusEl.className = 'ftc-status error';
-      statusEl.textContent = `❌ 錯誤 ${resp.status}：${body.message || '請重試'}`;
-      btn.disabled = false; btn.innerHTML = origHTML;
-    }
-  } catch(e) {
-    statusEl.className = 'ftc-status error';
-    statusEl.textContent = '❌ 網路錯誤，請確認網路連線後重試';
-    btn.disabled = false; btn.innerHTML = origHTML;
-  }
-}
-
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -1248,6 +1155,90 @@ document.getElementById('ar-results').style.display='none';
 document.getElementById('ar-calc-btn').disabled=false;
 document.getElementById('ar-loading').style.display='none';
 }
+
+// ════════════════════════════════════════
+// GitHub Actions 直接觸發
+// ════════════════════════════════════════
+const GH_REPO = 'stanhcliao/finance-automation';
+const TOKEN_KEY = 'gh_actions_token';
+
+function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+function setToken(t) { if(t) localStorage.setItem(TOKEN_KEY, t.trim()); else localStorage.removeItem(TOKEN_KEY); }
+
+function showTokenModal(cb) {
+  document.getElementById('token-modal').classList.add('show');
+  const inp = document.getElementById('token-input');
+  inp.value = getToken();
+  inp.type = 'password';
+  window._tokenCb = cb || null;
+  setTimeout(() => inp.focus(), 100);
+}
+function closeTokenModal() {
+  document.getElementById('token-modal').classList.remove('show');
+  window._tokenCb = null;
+}
+function saveToken() {
+  const t = document.getElementById('token-input').value.trim();
+  if (!t) { document.getElementById('token-input').style.borderColor='#c53030'; return; }
+  setToken(t);
+  closeTokenModal();
+  if (window._tokenCb) { const cb=window._tokenCb; window._tokenCb=null; cb(); }
+}
+document.addEventListener('click', e => {
+  if (e.target.id === 'token-modal') closeTokenModal();
+});
+
+async function runWorkflow(btn, workflow) {
+  const token = getToken();
+  if (!token) {
+    showTokenModal(() => runWorkflow(btn, workflow));
+    return;
+  }
+  const card = btn.closest('.finance-task-card');
+  const statusEl = card.querySelector('.ftc-status');
+  const origHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '⏳ 送出中...';
+  statusEl.className = 'ftc-status running';
+  statusEl.textContent = '⏳ 正在觸發 GitHub Actions...';
+  try {
+    const resp = await fetch(
+      `https://api.github.com/repos/${GH_REPO}/actions/workflows/${workflow}/dispatches`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ref: 'main' })
+      }
+    );
+    if (resp.status === 204) {
+      statusEl.className = 'ftc-status success';
+      statusEl.textContent = '✅ 已觸發！請到 GitHub Actions 查看進度 → 完成後下載 Artifacts';
+      btn.innerHTML = '✅ 已送出';
+      btn.style.cssText = 'background:#f0fdf4;color:#059669;border-color:#a7f3d0;cursor:default';
+      setTimeout(() => { btn.disabled=false; btn.innerHTML=origHTML; btn.style.cssText=''; }, 8000);
+    } else if (resp.status === 401 || resp.status === 403) {
+      setToken('');
+      statusEl.className = 'ftc-status error';
+      statusEl.textContent = '❌ Token 無效或過期，請重新設定';
+      btn.disabled=false; btn.innerHTML=origHTML;
+      showTokenModal(() => runWorkflow(btn, workflow));
+    } else {
+      const body = await resp.json().catch(() => ({}));
+      statusEl.className = 'ftc-status error';
+      statusEl.textContent = `❌ 錯誤 ${resp.status}：${body.message || '請重試'}`;
+      btn.disabled=false; btn.innerHTML=origHTML;
+    }
+  } catch(e) {
+    statusEl.className = 'ftc-status error';
+    statusEl.textContent = '❌ 網路錯誤，請確認網路連線後重試';
+    btn.disabled=false; btn.innerHTML=origHTML;
+  }
+}
+
 </script>
 
 <!-- ── GitHub Token Modal ── -->
