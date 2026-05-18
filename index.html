@@ -325,8 +325,9 @@ width: 100%; padding: 8px; border-radius: 8px;
 background: #eff4ff; color: #2563eb;
 border: 1px solid #bfdbfe; font-size: 12px; font-weight: 600;
 cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px;
+text-decoration: none; box-sizing: border-box;
 }
-.ftc-copy-btn:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
+.ftc-copy-btn:hover { background: #2563eb; color: #fff; border-color: #2563eb; text-decoration: none; }
 .ftc-copy-btn.copied { background: #f0fdf4; color: #059669; border-color: #a7f3d0; }
 </style>
 </head>
@@ -566,7 +567,7 @@ ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop
 <div class="finance-header">
 <div>
 <h2>📊 每月財務分析</h2>
-<p>複製下方指令貼到 Claude，依序完成每月財務報表產出</p>
+<p>點擊下方按鈕，直接在 GitHub Actions 執行分析，完成後下載 Excel 報表</p>
 </div>
 <div class="step-count">9</div>
 </div>
@@ -579,16 +580,16 @@ ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop
 <div class="ftc-step">1</div>
 <div class="ftc-info">
 <div class="ftc-title">原始資料處理</div>
-<div class="ftc-desc">上傳 ERP 原始訂單 Excel，篩選近 12 個月資料，建立快取 pkl 供後續步驟重複使用</div>
+<div class="ftc-desc">上傳 ERP 原始訂單 Excel（data/input.xlsx），篩選近 12 個月，建立快取供後續步驟使用</div>
 </div>
 </div>
 <div class="ftc-output">
 <span class="ftc-output-icon">💾</span>
-<span class="ftc-output-text">acc_report_processed / df_filtered.pkl</span>
+<span class="ftc-output-text">acc_report_processed.xlsx / df_filtered.pkl</span>
 </div>
-<button class="ftc-copy-btn" onclick="copyPrompt(this, '我上傳 raw data 你去幫我處理產生 acc_report_processed')">
-<span>📋</span> 複製指令
-</button>
+<a class="ftc-copy-btn" href="https://github.com/stanhcliao/finance-automation/actions/workflows/task1-raw-data.yml" target="_blank" rel="noopener">
+<span>▶</span> 執行分析
+</a>
 </div>
 
 <!-- Step 2 -->
@@ -596,17 +597,17 @@ ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop
 <div class="ftc-top">
 <div class="ftc-step">2</div>
 <div class="ftc-info">
-<div class="ftc-title">未採購品項統計</div>
-<div class="ftc-desc">找出訂單已成立但尚未採購的品項，依當月份輸出清單供採購追蹤</div>
+<div class="ftc-title">應收帳款分析</div>
+<div class="ftc-desc">計算各客戶帳齡（0-30/31-60/61-90/91-180/180+天），輸出帳齡樞紐與長條圖</div>
 </div>
 </div>
 <div class="ftc-output">
 <span class="ftc-output-icon">📄</span>
-<span class="ftc-output-text">[YYYYMM]_未採購品項_訂單成立.xlsx</span>
+<span class="ftc-output-text">accounts_receivable.xlsx</span>
 </div>
-<button class="ftc-copy-btn" onclick="copyPrompt(this, '幫我產出：' + getCurYM() + '_未採購品項_訂單成立')">
-<span>📋</span> 複製指令
-</button>
+<a class="ftc-copy-btn" href="https://github.com/stanhcliao/finance-automation/actions/workflows/task2-accounts-receivable.yml" target="_blank" rel="noopener">
+<span>▶</span> 執行分析
+</a>
 </div>
 
 <!-- Step 3 -->
@@ -614,17 +615,17 @@ ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop
 <div class="ftc-top">
 <div class="ftc-step">3</div>
 <div class="ftc-info">
-<div class="ftc-title">毛利率分析（各進貨管道）</div>
-<div class="ftc-desc">逐月統計各進貨管道（代購/客製/上架）毛利率，含 12 個月趨勢</div>
+<div class="ftc-title">業務員業績排行</div>
+<div class="ftc-desc">計算各業務員 GP 排行、訂單數、月度趨勢與進貨管道分佈，前三名標金色</div>
 </div>
 </div>
 <div class="ftc-output">
 <span class="ftc-output-icon">📊</span>
-<span class="ftc-output-text">毛利率分析_各進貨管道_[月份區間].xlsx</span>
+<span class="ftc-output-text">salesperson_ranking.xlsx</span>
 </div>
-<button class="ftc-copy-btn" onclick="copyPrompt(this, '幫我產出：毛利率分析_各進貨管道_' + getRange12())">
-<span>📋</span> 複製指令
-</button>
+<a class="ftc-copy-btn" href="https://github.com/stanhcliao/finance-automation/actions/workflows/task3-salesperson-ranking.yml" target="_blank" rel="noopener">
+<span>▶</span> 執行分析
+</a>
 </div>
 
 <!-- Step 4 -->
@@ -632,17 +633,17 @@ ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop
 <div class="ftc-top">
 <div class="ftc-step">4</div>
 <div class="ftc-info">
-<div class="ftc-title">代購分析（含占比）</div>
-<div class="ftc-desc">統計代購/客製/上架商品逐月訂單金額與毛利，含各類型訂單金額占比與毛利金額占比</div>
+<div class="ftc-title">KAS 獎金計算</div>
+<div class="ftc-desc">計算 V1/V2/V3 各業務員月度獎金（底薪 16,000 + GP × 5%），輸出樞紐與 GP 明細</div>
 </div>
 </div>
 <div class="ftc-output">
-<span class="ftc-output-icon">📊</span>
-<span class="ftc-output-text">代購分析_[月份區間].xlsx</span>
+<span class="ftc-output-icon">💼</span>
+<span class="ftc-output-text">kas_bonus.xlsx</span>
 </div>
-<button class="ftc-copy-btn" onclick="copyPrompt(this, '幫我產出：代購分析_' + getRange12())">
-<span>📋</span> 複製指令
-</button>
+<a class="ftc-copy-btn" href="https://github.com/stanhcliao/finance-automation/actions/workflows/task4-kas-bonus.yml" target="_blank" rel="noopener">
+<span>▶</span> 執行分析
+</a>
 </div>
 
 <!-- Step 5 -->
@@ -650,17 +651,17 @@ ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop
 <div class="ftc-top">
 <div class="ftc-step">5</div>
 <div class="ftc-info">
-<div class="ftc-title">優惠品項統計</div>
-<div class="ftc-desc">統計每月 PCC- 開頭優惠券及 Deduction 折扣金額逐月加總，含趨勢分析</div>
+<div class="ftc-title">大單分析</div>
+<div class="ftc-desc">列出 GP &gt; 100,000 的大單明細，獎金 = GP × 3%，含業務員大單彙總與月度趨勢圖</div>
 </div>
 </div>
 <div class="ftc-output">
-<span class="ftc-output-icon">🏷️</span>
-<span class="ftc-output-text">優惠品項統計_[月份區間].xlsx</span>
+<span class="ftc-output-icon">🏆</span>
+<span class="ftc-output-text">large_order_analysis.xlsx</span>
 </div>
-<button class="ftc-copy-btn" onclick="copyPrompt(this, '幫我產出：優惠品項統計_' + getRange12())">
-<span>📋</span> 複製指令
-</button>
+<a class="ftc-copy-btn" href="https://github.com/stanhcliao/finance-automation/actions/workflows/task5-large-order.yml" target="_blank" rel="noopener">
+<span>▶</span> 執行分析
+</a>
 </div>
 
 <!-- Step 6 -->
@@ -668,17 +669,17 @@ ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop
 <div class="ftc-top">
 <div class="ftc-step">6</div>
 <div class="ftc-info">
-<div class="ftc-title">KAS 業務獎金</div>
-<div class="ftc-desc">計算卓心媛、藍苡珊本月 KAS 獎金（16,000 + GP × 5%），V1/V2/V3 版本並列，含與上期差異比</div>
+<div class="ftc-title">客戶集中度分析</div>
+<div class="ftc-desc">計算 Top 5/10/20 客戶 GP 佔比、HHI 集中度指數、月度活躍客戶數趨勢</div>
 </div>
 </div>
 <div class="ftc-output">
-<span class="ftc-output-icon">💼</span>
-<span class="ftc-output-text">KAS業務獎金_[月日]計算.xlsx</span>
+<span class="ftc-output-icon">👥</span>
+<span class="ftc-output-text">customer_concentration.xlsx</span>
 </div>
-<button class="ftc-copy-btn" onclick="copyPrompt(this, '幫我產出：KAS業務獎金_' + getMonthDay() + '計算')">
-<span>📋</span> 複製指令
-</button>
+<a class="ftc-copy-btn" href="https://github.com/stanhcliao/finance-automation/actions/workflows/task6-customer-concentration.yml" target="_blank" rel="noopener">
+<span>▶</span> 執行分析
+</a>
 </div>
 
 <!-- Step 7 -->
@@ -686,17 +687,17 @@ ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop
 <div class="ftc-top">
 <div class="ftc-step">7</div>
 <div class="ftc-info">
-<div class="ftc-title">KAD 業務獎金</div>
-<div class="ftc-desc">依各客戶計算柯謙牧、陳璿 BS 公式獎金（MIN(MAX(300×GP^0.2, GP×8%), GP×28%)），3 個月並列明細</div>
+<div class="ftc-title">商品分析</div>
+<div class="ftc-desc">商品 GP 排行、ABC 分類（A=前70%/B=70-90%/C=後10%）、管道 Top 商品、月度趨勢</div>
 </div>
 </div>
 <div class="ftc-output">
-<span class="ftc-output-icon">💼</span>
-<span class="ftc-output-text">KAD業務獎金_[月日]計算.xlsx</span>
+<span class="ftc-output-icon">📦</span>
+<span class="ftc-output-text">product_analysis.xlsx</span>
 </div>
-<button class="ftc-copy-btn" onclick="copyPrompt(this, '幫我產出：KAD業務獎金_' + getMonthDay() + '計算')">
-<span>📋</span> 複製指令
-</button>
+<a class="ftc-copy-btn" href="https://github.com/stanhcliao/finance-automation/actions/workflows/task7-product-analysis.yml" target="_blank" rel="noopener">
+<span>▶</span> 執行分析
+</a>
 </div>
 
 <!-- Step 8 -->
@@ -704,17 +705,17 @@ ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop
 <div class="ftc-top">
 <div class="ftc-step">8</div>
 <div class="ftc-info">
-<div class="ftc-title">大單獎金明細</div>
-<div class="ftc-desc">列出近 12 個月單筆品項利潤 GP > 100,000 的訂單明細，獎金 = GP × 3%，含「是否排除」核對欄位</div>
+<div class="ftc-title">Neo 上架分析</div>
+<div class="ftc-desc">計算 Neo 月度獎金：代購/客製 = GP × 20%，上架 = GP × 20%，含管道分佈與 Top 商品</div>
 </div>
 </div>
 <div class="ftc-output">
-<span class="ftc-output-icon">🏆</span>
-<span class="ftc-output-text">大單獎金明細_[月份區間].xlsx</span>
+<span class="ftc-output-icon">⭐</span>
+<span class="ftc-output-text">neo_listing_analysis.xlsx</span>
 </div>
-<button class="ftc-copy-btn" onclick="copyPrompt(this, '幫我產出：大單獎金明細_' + getRange12())">
-<span>📋</span> 複製指令
-</button>
+<a class="ftc-copy-btn" href="https://github.com/stanhcliao/finance-automation/actions/workflows/task8-neo-listing.yml" target="_blank" rel="noopener">
+<span>▶</span> 執行分析
+</a>
 </div>
 
 <!-- Step 9 -->
@@ -722,17 +723,17 @@ ondragover="arEv('p42',true,event)" ondragleave="arEv('p42',false,event)" ondrop
 <div class="ftc-top">
 <div class="ftc-step">9</div>
 <div class="ftc-info">
-<div class="ftc-title">Neo 獎金（史泰博）</div>
-<div class="ftc-desc">計算兼職業務 Neo 當月史泰博通路獎金：代購/客製 = GP × 20%，上架商品 = (單價 - P3R 價格) × 數量</div>
+<div class="ftc-title">月報彙整</div>
+<div class="ftc-desc">產出當月完整月報：KPI 執行摘要（含月增率）、業務員業績、管道圓餅圖、12 個月 GP 趨勢、Top 5 客戶</div>
 </div>
 </div>
 <div class="ftc-output">
-<span class="ftc-output-icon">⭐</span>
-<span class="ftc-output-text">Neo獎金_史泰博_[當月].xlsx</span>
+<span class="ftc-output-icon">📑</span>
+<span class="ftc-output-text">monthly_report.xlsx</span>
 </div>
-<button class="ftc-copy-btn" onclick="copyPrompt(this, '幫我產出：Neo獎金_史泰博_' + getCurYearMonth())">
-<span>📋</span> 複製指令
-</button>
+<a class="ftc-copy-btn" href="https://github.com/stanhcliao/finance-automation/actions/workflows/task9-monthly-report.yml" target="_blank" rel="noopener">
+<span>▶</span> 執行分析
+</a>
 </div>
 
 </div><!-- /finance-grid -->
